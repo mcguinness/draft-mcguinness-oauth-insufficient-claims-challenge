@@ -154,7 +154,7 @@ Resources. The Client's response, however, is grant-specific:
   (authorization_code, device_code, CIBA, and similar), a Client
   responds by initiating a new authorization request, conveying its
   claim requirements via the OpenID Connect `claims` request
-  parameter ({{Section 5.5 of OpenID.Core}}); see {{rel-oidc-claims}}.
+  parameter (Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}.
   The `requested_claims` parameter defined here is not used with
   these grants.
 
@@ -487,7 +487,7 @@ grant, and the `urn:openid:params:grant-type:ciba` grant. For these
 grants, a Client responding to `insufficient_claims` SHOULD initiate
 a new authorization request and convey its claim requirements using
 the OpenID Connect `claims` request parameter
-({{Section 5.5 of OpenID.Core}}); see {{rel-oidc-claims}}.
+(Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}.
 
 This separation lets the Authorization Server apply consent, user
 authentication, or interaction policies appropriate to the new claim
@@ -628,7 +628,7 @@ Token depends on how the original Access Token was acquired:
   involve end-user interaction), the Client SHOULD initiate a new
   authorization request and convey its claim requirements using the
   OpenID Connect `claims` request parameter
-  ({{Section 5.5 of OpenID.Core}}); see {{rel-oidc-claims}}. The
+  (Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}. The
   `requested_claims` parameter defined in this document is not used
   in this case.
 
