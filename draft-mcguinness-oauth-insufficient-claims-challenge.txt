@@ -13,16 +13,21 @@ Expires: 27 November 2026
 
 Abstract
 
-   This specification defines a mechanism for an OAuth 2.0 Authorization
-   Server or Protected Resource to signal that a credential presented by
-   a Client is otherwise acceptable but does not carry the claims the
-   recipient requires to fulfil the request.  A new error code,
-   insufficient_claims, together with a required_claims parameter
-   enumerating the missing claims, lets the recipient challenge the
-   Client to obtain a credential carrying those claims.  The mechanism
-   applies to credentials presented at the OAuth 2.0 Token Endpoint by
-   assertion-based grants, including OAuth 2.0 Token Exchange, and to
-   Access Tokens presented at OAuth 2.0 Protected Resources.  A
+   This specification defines an OAuth 2.0 challenge mechanism by which
+   an Authorization Server or Protected Resource signals that a
+   credential presented by a Client is otherwise acceptable but does not
+   carry the claims the recipient requires to fulfil the request.  A new
+   error code, insufficient_claims, together with a required_claims
+   parameter that enumerates the missing claims, lets the recipient
+   indicate which claims are needed.  The same challenge is used in
+   Token Endpoint error responses, in Bearer authentication challenges
+   at Protected Resources, and (optionally) in OAuth 2.0 Protected
+   Resource Metadata.  The challenge is intentionally decoupled from how
+   the Client responds: for back-channel re-issuance grants (OAuth 2.0
+   Token Exchange and Refresh Token), a Client uses the requested_claims
+   Token Endpoint request parameter defined here; for grants that may
+   require end-user interaction (authorization_code, device_code, CIBA),
+   a Client uses the OpenID Connect claims request parameter.  A
    motivating use case is just-in-time account provisioning by a
    Resource Authorization Server receiving an identity assertion under
    the Identity Assertion Authorization Grant.
@@ -83,16 +88,23 @@ Table of Contents
        1.2.1.  Just-in-Time Account Provisioning at a Resource
                Authorization Server
        1.2.2.  Resource-Side Claim Requirements
-       1.2.3.  Other Assertion-Based Grants
+       1.2.3.  Multi-Resource Refresh Tokens
+       1.2.4.  Other Assertion-Based Grants
    2.  Conventions and Definitions
    3.  Insufficient Claims at the Token Endpoint
      3.1.  Error Code
-     3.2.  required_claims Response Parameter
-     3.3.  required_claims Token Endpoint Request Parameter
-     3.4.  Authorization Server Behavior
-     3.5.  No Loop Guarantee
+     3.2.  Response Parameter
+     3.3.  Token Endpoint Request Parameter for Back-Channel
+           Re-Issuance
+       3.3.1.  Use with Token Exchange
+       3.3.2.  Use with Refresh Token
+       3.3.3.  Interactive Grants
+     3.4.  Authorization Server Metadata
+     3.5.  Authorization Server Behavior
+     3.6.  No Loop Guarantee
    4.  Insufficient Claims at the Protected Resource
      4.1.  Client Behavior
+     4.2.  Protected Resource Metadata
    5.  End-to-End Examples
      5.1.  Token Exchange Retry
      5.2.  Protected Resource Challenge
@@ -100,10 +112,11 @@ Table of Contents
      6.1.  Identity Assertion Authorization Grant
      6.2.  Assertion-Based Grants (RFC 7521, RFC 7522, RFC 7523)
      6.3.  OAuth 2.0 scope Parameter
-     6.4.  OpenID Connect claims Request Parameter
-     6.5.  OAuth 2.0 Bearer Token Usage (RFC 6750) and Step-Up
+     6.4.  OAuth 2.0 Resource Indicators (RFC 8707)
+     6.5.  OpenID Connect claims Request Parameter
+     6.6.  OAuth 2.0 Bearer Token Usage (RFC 6750) and Step-Up
            Authentication (RFC 9470)
-     6.6.  OAuth 2.0 Rich Authorization Requests (RFC 9396)
+     6.7.  OAuth 2.0 Rich Authorization Requests (RFC 9396)
    7.  Security Considerations
      7.1.  Disclosure of Claim Requirements
      7.2.  Disclosure of Issued Claims
@@ -115,6 +128,10 @@ Table of Contents
    9.  IANA Considerations
      9.1.  OAuth Extensions Error Registry
      9.2.  OAuth Parameters Registry
+       9.2.1.  required_claims
+       9.2.2.  requested_claims
+     9.3.  OAuth Protected Resource Metadata Registry
+     9.4.  OAuth Authorization Server Metadata Registry
    10. References
      10.1.  Normative References
      10.2.  Informative References
@@ -128,11 +145,11 @@ Table of Contents
    Authorization Server's Token Endpoint to obtain an Access Token; a
    Client then presents that Access Token at a Protected Resource to
    invoke an operation.  In each case the recipient may require specific
-   claims about the subject -- an identifier, a directory attribute, or
-   a policy attribute -- and the credential it receives may not carry
-   them.  Without those claims the operation cannot complete, even
-   though the credential itself is cryptographically valid and
-   structurally acceptable.
+   claims about the subject (an identifier, a directory attribute, or a
+   policy attribute), and the credential it receives may not carry them.
+   Without those claims the operation cannot complete, even though the
+   credential itself is cryptographically valid and structurally
+   acceptable.
 
    There is currently no interoperable way for either an Authorization
    Server processing a Token Endpoint request, or a Protected Resource
@@ -142,37 +159,64 @@ Table of Contents
    which limits composability across Authorization Servers, Clients, and
    resources.
 
-   This specification defines:
+   This specification separates the challenge (universal across
+   recipients and grants) from the Client's response (grant-specific).
+   It defines:
 
    1.  An OAuth 2.0 error code, insufficient_claims, returned by the
        recipient of a credential when that credential is otherwise
        acceptable but lacks claims required to fulfil the request.  The
        error code is returned in Token Endpoint error responses
-       (Section 5.2 of [RFC6749]) for any assertion-based grant
-       ([RFC7521]) or Token Exchange ([RFC8693]), and in Bearer
-       authentication challenges at Protected Resources (Section 3 of
-       [RFC6750]).
+       (Section 5.2 of [RFC6749]) and in Bearer authentication
+       challenges at Protected Resources (Section 3 of [RFC6750]).
 
    2.  A required_claims parameter that enumerates the missing claims
        using the same syntax as the scope parameter (Section 3.3 of
-       [RFC6749]).  The parameter is carried in the error response or
-       challenge.
+       [RFC6749]).  The parameter is carried in the error response, in
+       the authentication challenge, and (optionally) in OAuth 2.0
+       Protected Resource Metadata ([RFC9728]).
 
-   3.  A required_claims Token Endpoint request parameter that a Client
-       includes when retrying via Token Exchange with the Authorization
-       Server that issued the subject token, in order to obtain a re-
-       issued subject token carrying the requested claims.  This retry
-       parameter is defined for OAuth 2.0 Token Exchange only; for other
-       assertion-based grants, the error code still applies but the
-       mechanism by which the Client obtains a richer assertion is
-       grant-specific and out of scope.
+   3.  A requested_claims Token Endpoint request parameter that a Client
+       includes on a back-channel re-issuance request to obtain a
+       credential carrying the indicated claims.  This parameter is
+       defined for use with the OAuth 2.0 Token Exchange ([RFC8693]) and
+       Refresh Token (Section 6 of [RFC6749]) grants only.  Other grants
+       are addressed below.
+
+   4.  A required_claims OAuth 2.0 Protected Resource Metadata
+       ([RFC9728]) parameter by which a Protected Resource advertises
+       the claims it may require, so Clients can request appropriate
+       claims at Access Token issuance time and reduce the need for
+       runtime challenges.
+
+   5.  A requested_claims_parameter_supported OAuth 2.0 Authorization
+       Server Metadata ([RFC8414]) parameter by which an Authorization
+       Server advertises that it recognizes the requested_claims request
+       parameter at its Token Endpoint.
+
+   The challenge applies to credentials presented at the Token Endpoint
+   under any grant, and to Access Tokens presented at Protected
+   Resources.  The Client's response, however, is grant-specific:
+
+   *  For OAuth 2.0 Token Exchange and Refresh Token grants, a Client
+      responds to insufficient_claims by sending a back-channel Token
+      Endpoint request that includes the requested_claims parameter
+      defined in this document; see Section 3.3.
+
+   *  For grants that may require end-user interaction
+      (authorization_code, device_code, CIBA, and similar), a Client
+      responds by initiating a new authorization request, conveying its
+      claim requirements via the OpenID Connect claims request parameter
+      (Section 5.5 of [OpenID.Core]); see Section 6.5.  The
+      requested_claims parameter defined here is not used with these
+      grants.
 
    The mechanism is opt-in and degrades gracefully.  A recipient opts in
    by returning insufficient_claims; a Client that does not recognize
    the error treats the response as it would any other failure.  An
-   Authorization Server that does not recognize the required_claims
+   Authorization Server that does not recognize the requested_claims
    request parameter ignores it per Section 3.2 of [RFC6749]; the Client
-   may then receive a second insufficient_claims, which per Section 3.5
+   may then receive a second insufficient_claims, which per Section 3.6
    it treats as a terminal failure.  The mechanism is compositional with
    existing claim-issuance policy: an Authorization Server does not
    release any claim it would not otherwise release, and remains the
@@ -222,13 +266,23 @@ Table of Contents
    mechanism defined here allows the Protected Resource to challenge the
    Client to obtain a richer Access Token before retrying.
 
-1.2.3.  Other Assertion-Based Grants
+1.2.3.  Multi-Resource Refresh Tokens
+
+   A Client holding a Refresh Token that issues Access Tokens for
+   multiple audiences (Section 6 of [RFC6749]) may need different claim
+   sets in the Access Tokens it obtains for each audience.  The
+   requested_claims parameter on the Refresh Token request lets the
+   Client request the audience-appropriate claim set for the next Access
+   Token without initiating a new authorization flow.
+
+1.2.4.  Other Assertion-Based Grants
 
    Any assertion-based grant defined by [RFC7521], including JWT Bearer
    ([RFC7523]) and SAML 2.0 Bearer ([RFC7522]), shares the "incoming
    credential carrying claims" shape with Token Exchange.  This
    specification's error code applies uniformly to those grants; how the
-   Client obtains a richer assertion is grant-specific.
+   Client obtains a richer assertion is governed by the assertion
+   provider's protocol and is out of scope for this document.
 
 2.  Conventions and Definitions
 
@@ -256,7 +310,7 @@ Table of Contents
       that issued, or can re-issue, a credential the Client uses in an
       OAuth 2.0 request.  In the Token Exchange retry case (Section 3.3)
       this is the Authorization Server the Client targets with
-      required_claims; in the Protected Resource case (Section 4) this
+      requested_claims; in the Protected Resource case (Section 4) this
       is the Authorization Server that issued the Access Token presented
       at the resource.
 
@@ -272,26 +326,29 @@ Table of Contents
 
 3.  Insufficient Claims at the Token Endpoint
 
-   This section applies to Token Endpoint requests that use an
-   assertion-based grant ([RFC7521], including JWT Bearer ([RFC7523])
-   and SAML 2.0 Bearer ([RFC7522])) or OAuth 2.0 Token Exchange
-   ([RFC8693]).  The error code defined in Section 3.1 applies to all
-   such grants.  The required_claims request parameter defined in
-   Section 3.3 is defined only for the Token Exchange retry path; for
-   other assertion-based grants, the Client obtains a richer assertion
-   using grant-specific mechanisms outside this document's scope.
+   The insufficient_claims error code defined in Section 3.1 applies to
+   any OAuth 2.0 Token Endpoint request whose grant presents a claim-
+   bearing credential, including the OAuth 2.0 Token Exchange grant
+   ([RFC8693]), assertion-based grants ([RFC7521], [RFC7522],
+   [RFC7523]), and the Refresh Token grant (Section 6 of [RFC6749]).
+   The error code is decoupled from how a Client responds: the
+   requested_claims request parameter defined in Section 3.3 is one
+   response path, applicable to back-channel re-issuance under Token
+   Exchange and Refresh Token; for grants that may require end-user
+   interaction, the Client uses the OpenID Connect claims request
+   parameter (see Section 6.5).
 
-   A Processing Authorization Server receiving such a request MUST first
-   validate the assertion or subject token per its own acceptance rules
-   and the rules of the grant profile in use.  If the credential is
-   rejected for cryptographic, audience, issuer, type, or freshness
+   A Processing Authorization Server receiving a Token Endpoint request
+   MUST first validate the presented credential per its own acceptance
+   rules and the rules of the grant profile in use.  If the credential
+   is rejected for cryptographic, audience, issuer, type, or freshness
    reasons, the server MUST respond with the applicable error from
    Section 5.2 of [RFC6749] (typically invalid_grant) rather than the
    error defined here.
 
-   If the assertion or subject token is acceptable but does not carry
-   claims sufficient to fulfil the request, the Processing Authorization
-   Server MAY respond with the error code defined in this section.
+   If the credential is acceptable but does not carry claims sufficient
+   to fulfil the request, the Processing Authorization Server MAY
+   respond with the error code defined in this section.
 
 3.1.  Error Code
 
@@ -305,19 +362,21 @@ Table of Contents
    Endpoint error response, formatted per Section 5.2 of [RFC6749] with
    HTTP status code 400.
 
-3.2.  required_claims Response Parameter
+3.2.  Response Parameter
 
    The error response SHOULD include a required_claims parameter
    enumerating the claims the Processing Authorization Server requires.
 
-   The required_claims value is a string containing a space-delimited,
-   case-sensitive list of claim names.  Each claim name is the name of a
-   claim as it would appear in the credential (for example, email, name,
-   given_name, family_name).  Claim names use the syntax of scope-token
-   from Section 3.3 of [RFC6749]: each claim name MUST consist only of
-   characters in the ranges %x21, %x23-5B, and %x5D-7E.  In particular,
-   claim names MUST NOT contain the SP (%x20), DQUOTE (%x22), or
-   backslash (%x5C) characters.  The order of names in the list is not
+   The required_claims value is a space-delimited list of claim names.
+   For example:
+
+   email given_name family_name
+
+   Each name identifies a claim as it appears in the credential (for
+   example, the JSON member name in a JWT).  Claim names use the scope-
+   token syntax of Section 3.3 of [RFC6749]: visible ASCII characters
+   excluding space (%x20), double-quote (%x22), and backslash (%x5C).
+   Names are case-sensitive, and the order of names in the list is not
    significant.
 
    When carried in a JSON error response body ([RFC8259]), the value is
@@ -355,52 +414,69 @@ Table of Contents
    agreement with the population of Issuing Authorization Servers it
    expects to interoperate with.
 
+   Claim names in required_claims are interpreted in the context of the
+   (issuer, subject, audience, Client) tuple of the request, in the same
+   way as the scope parameter (Section 3.3 of [RFC6749]); see
+   Section 6.3.  The Authorization Server's claim release policy, the
+   content and format of issued claims, and the meaning attached to a
+   given claim name are all scoped to that tuple.  A value carried
+   verbatim from a required_claims field in an insufficient_claims
+   response into a requested_claims parameter on a retry Token Endpoint
+   request only retains its meaning when the audience, subject, and
+   Client are preserved, and the Issuing and Processing Authorization
+   Servers share an understanding of the claim names involved.
+
    A Processing Authorization Server SHOULD NOT include the same claim
    name more than once.  A Client or Issuing Authorization Server
    receiving duplicate claim names MUST treat the duplicates as a single
    request for that claim.
 
-3.3.  required_claims Token Endpoint Request Parameter
-
-   A Client that receives an insufficient_claims error response from a
-   Processing Authorization Server, and that supports the mechanism
-   defined in this document, MAY send a Token Exchange request
-   ([RFC8693]) to an Issuing Authorization Server, including the
-   required_claims parameter defined in this section, in order to obtain
-   a re-issued subject token.
-
-   The retry is a new Token Exchange request, not a repetition of any
-   prior request.  The Client selects the subject_token and
-   subject_token_type based on its established credential relationship
-   with the Issuing Authorization Server; this is typically the same
-   subject_token the Client originally exchanged at that Authorization
-   Server.  The Client MUST set the audience (and, if applicable,
-   resource) parameters to identify the same Processing Authorization
-   Server or resource as the original request.
-
-   A Client MUST ensure that the required_claims value it sends conforms
-   to the syntax defined in this document.  If a value received from a
-   Processing Authorization Server is malformed, the Client MUST NOT
-   forward it as required_claims.
+3.3.  Token Endpoint Request Parameter for Back-Channel Re-Issuance
 
    This document extends the Token Endpoint request (Section 3.2 of
    [RFC6749]) with the following parameter:
 
-   required_claims:  OPTIONAL.  A space-delimited list of claim names
+   requested_claims:  OPTIONAL.  A space-delimited list of claim names
       that the Client is requesting be included in the issued token.
       The syntax is identical to the required_claims error response
       parameter defined in this document.  When included in a Token
       Endpoint request, the value is encoded as an application/x-www-
-      form-urlencoded form parameter.  The required_claims parameter
+      form-urlencoded form parameter.  The requested_claims parameter
       MUST NOT appear more than once in a single Token Endpoint request.
       A Client SHOULD NOT include the same claim name more than once
       within the value; an Authorization Server receiving duplicate
       claim names MUST treat them as a single request for that claim.
 
-   A Client SHOULD forward the required_claims value received in the
-   insufficient_claims error response verbatim, and MAY include
-   additional claim names based on local knowledge of the target
-   resource.
+   The requested_claims parameter is defined for use with the OAuth 2.0
+   Token Exchange grant ([RFC8693]) and the OAuth 2.0 Refresh Token
+   grant (Section 6 of [RFC6749]).  These grants are back-channel re-
+   issuance flows in which the Client already holds a credential that
+   the Authorization Server can use to determine eligibility for the
+   requested claims, without a fresh end-user interaction.  The
+   parameter MUST NOT be used with the authorization_code grant, the
+   urn:openid:params:grant-type:ciba grant, or other interactive grants
+   in which the Authorization Server may need to involve the end user;
+   see Section 3.3.3 for guidance on those grants.
+
+   A Client MUST ensure that the requested_claims value it sends
+   conforms to the syntax defined in this document.  If a value received
+   from a Processing Authorization Server in required_claims is
+   malformed, the Client MUST NOT forward it.  A Client SHOULD forward
+   the value received in the required_claims field of the
+   insufficient_claims error response verbatim as the requested_claims
+   value, and MAY include additional claim names based on local
+   knowledge of the target resource.
+
+3.3.1.  Use with Token Exchange
+
+   A Client retrying via Token Exchange sends a new Token Exchange
+   request to the Issuing Authorization Server.  The Client selects the
+   subject_token and subject_token_type based on its established
+   credential relationship with the Issuing Authorization Server; this
+   is typically the same subject_token the Client originally exchanged
+   at that Authorization Server.  The Client MUST set the audience (and,
+   if applicable, resource) parameters to identify the same Processing
+   Authorization Server or resource as the original request.
 
    Example request:
 
@@ -413,28 +489,91 @@ Table of Contents
    &subject_token=eyJhbGciOi...
    &subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token
    &audience=https%3A%2F%2Fapi.example.com%2F
-   &required_claims=email+given_name+family_name
+   &requested_claims=email+given_name+family_name
 
-   The required_claims request parameter is defined for use with OAuth
-   2.0 Token Exchange.  For other assertion-based grants ([RFC7521],
-   [RFC7522], [RFC7523]), the mechanism by which the Client obtains a
-   richer assertion is grant-specific and out of scope for this
-   document; the Client uses whatever process its assertion provider
-   supports and then presents the resulting assertion in a fresh Token
-   Endpoint request.
+3.3.2.  Use with Refresh Token
 
-3.4.  Authorization Server Behavior
+   A Client holding a Refresh Token (Section 6 of [RFC6749]) MAY include
+   requested_claims on a Refresh Token request to obtain a re-issued
+   Access Token (and, where applicable, ID Token) carrying the indicated
+   claims.  This is particularly useful for multi-resource Refresh
+   Tokens, where a single Refresh Token issues Access Tokens for several
+   audiences and the claim set required differs per audience.
 
-   An Authorization Server that supports the required_claims request
-   parameter SHOULD include each requested claim in the issued token,
-   subject to its own policy.  In particular, the Authorization Server:
+   Example request:
+
+   POST /oauth2/token HTTP/1.1
+   Host: as.example.com
+   Content-Type: application/x-www-form-urlencoded
+
+   grant_type=refresh_token
+   &refresh_token=8xLOxBtZp8...
+   &audience=https%3A%2F%2Fapi.example.com%2F
+   &requested_claims=email+department
+
+   The Authorization Server applies its normal Refresh Token policy,
+   including any policy that would have applied had the Client requested
+   those claims at the original authorization.  An Authorization Server
+   that would require fresh end-user consent to release a requested
+   claim MAY decline that claim or respond with an error that prompts
+   the Client to initiate a new authorization request (see
+   Section 3.3.3).
+
+3.3.3.  Interactive Grants
+
+   The requested_claims request parameter is not used with grants that
+   may require end-user interaction, including the authorization_code
+   grant, the urn:ietf:params:oauth:grant-type:device_code grant, and
+   the urn:openid:params:grant-type:ciba grant.  For these grants, a
+   Client responding to insufficient_claims SHOULD initiate a new
+   authorization request and convey its claim requirements using the
+   OpenID Connect claims request parameter (Section 5.5 of
+   [OpenID.Core]); see Section 6.5.
+
+   This separation lets the Authorization Server apply consent, user
+   authentication, or interaction policies appropriate to the new claim
+   release, rather than requiring those policies to be expressed as a
+   back-channel side effect.
+
+3.4.  Authorization Server Metadata
+
+   An Authorization Server that supports the requested_claims request
+   parameter defined in Section 3.3 SHOULD advertise that support in its
+   OAuth 2.0 Authorization Server Metadata ([RFC8414]) using the
+   following metadata parameter:
+
+   requested_claims_parameter_supported:  OPTIONAL.  Boolean value
+      indicating whether the Authorization Server supports the
+      requested_claims Token Endpoint request parameter defined in this
+      document.  If omitted, the default value is false.
+
+   A Client MAY consult this metadata to determine whether to send
+   requested_claims on a Token Exchange or Refresh Token request,
+   including proactively on a first attempt where the Client expects
+   specific claims will be needed.  A Client MUST NOT rely on the
+   absence or false value of this metadata to predict an Authorization
+   Server's behavior on requested_claims; an Authorization Server that
+   does not advertise support MAY still honor the parameter (consistent
+   with Section 3.2 of [RFC6749]).
+
+   This metadata parameter advertises support for the Token Endpoint
+   request parameter only.  It does not advertise support for the
+   insufficient_claims error code in error responses; recipients return
+   that error code per their own policy regardless of metadata.
+
+3.5.  Authorization Server Behavior
+
+   An Authorization Server that supports the requested_claims request
+   parameter on Token Exchange or Refresh Token requests SHOULD include
+   each requested claim in the issued token, subject to its own policy.
+   In particular, the Authorization Server:
 
    *  MUST NOT release a claim it would not otherwise release under its
-      configured policy for the requesting Client, the audience, and the
-      subject.  Receipt of required_claims is not authorization to
-      bypass consent, privacy, or release controls.
+      configured policy for the subject, the audience, and the
+      requesting Client.  Receipt of requested_claims is not
+      authorization to bypass consent, privacy, or release controls.
 
-   *  MUST NOT treat required_claims as a complete enumeration of the
+   *  MUST NOT treat requested_claims as a complete enumeration of the
       claims that should be issued.  The Authorization Server MAY
       include additional claims it would normally include.
 
@@ -442,18 +581,18 @@ Table of Contents
       include a claim is not, by itself, a reason to fail the request.
 
    *  SHOULD NOT fail the request because of an unrecognized claim name
-      in required_claims.
+      in requested_claims.
 
-   Issuance of a token in response to a required_claims request is not
+   Issuance of a token in response to a requested_claims request is not
    an assertion by the Authorization Server that all requested claims
    were honored.  A Client wishing to verify that a specific claim is
    present in the re-issued token before retrying inspects the issued
    token using the mechanisms applicable to its format.
 
-3.5.  No Loop Guarantee
+3.6.  No Loop Guarantee
 
    This specification does not oblige the Issuing Authorization Server
-   to satisfy a required_claims request, nor the Processing
+   to satisfy a requested_claims request, nor the Processing
    Authorization Server to accept a re-issued credential whose claims
    still fall short.  For the purposes of this section, the "logical
    Token Endpoint exchange" is the user-initiated workflow that produced
@@ -507,28 +646,68 @@ Table of Contents
    document, obtains a new Access Token carrying the claims indicated by
    required_claims and retries the resource request with the new token.
    The mechanism by which the Client obtains the new Access Token
-   depends on its grant:
+   depends on how the original Access Token was acquired:
 
-   *  When the Access Token was obtained via Token Exchange, the Client
-      MAY include the required_claims request parameter (Section 3.3) in
-      a fresh Token Exchange.
+   *  When the original Access Token was obtained via OAuth 2.0 Token
+      Exchange ([RFC8693]), the Client SHOULD send a new Token Exchange
+      request including the requested_claims parameter (Section 3.3).
 
-   *  When the Access Token was obtained via another assertion-based
-      grant, the Client uses whatever mechanism its Authorization Server
-      supports to obtain a richer Access Token, including (where
-      applicable) the required_claims request parameter.
+   *  When the original Access Token was obtained from a Refresh Token
+      (Section 6 of [RFC6749]), the Client SHOULD send a Refresh Token
+      request including the requested_claims parameter (Section 3.3).
+      This is particularly applicable to multi-resource Refresh Tokens.
 
-   *  When the Access Token was obtained via an interactive
-      authorization flow, the Client MAY initiate a new authorization
-      request using the claims request parameter of OpenID Connect Core
-      1.0 [OpenID.Core] (where applicable) or other deployment- specific
-      mechanisms to obtain an Access Token carrying the requested
-      claims.
+   *  When the original Access Token was obtained via an interactive
+      authorization flow (the authorization_code grant, the device
+      authorization grant, the CIBA grant, or any other grant that may
+      involve end-user interaction), the Client SHOULD initiate a new
+      authorization request and convey its claim requirements using the
+      OpenID Connect claims request parameter (Section 5.5 of
+      [OpenID.Core]); see Section 6.5.  The requested_claims parameter
+      defined in this document is not used in this case.
 
    A Client SHOULD issue at most one retry per resource request in
    response to insufficient_claims, and MUST treat any subsequent
    insufficient_claims challenge for the same logical request as a
    terminal failure to avoid retry loops.
+
+4.2.  Protected Resource Metadata
+
+   A Protected Resource MAY advertise the set of claims it may require
+   in its OAuth 2.0 Protected Resource Metadata document ([RFC9728])
+   using the following metadata parameter:
+
+   required_claims:  OPTIONAL.  A JSON array of strings, each value
+      being a claim name in the syntax defined in Section 3.2.  The
+      array enumerates claims the Protected Resource may require in
+      Access Tokens.
+
+   Example metadata fragment:
+
+   {
+     "resource": "https://api.example.com/",
+     "authorization_servers": ["https://as.example.com/"],
+     "scopes_supported": ["read", "write"],
+     "required_claims": ["email", "given_name", "family_name"]
+   }
+
+   The advertised set is advisory and represents a maximal or typical
+   set of claims the resource may require across its operations.  A
+   Client that obtains an Access Token carrying these claims SHOULD, in
+   the common case, avoid an insufficient_claims challenge.
+
+   The Protected Resource MAY still return insufficient_claims for
+   operations whose requirements depend on request path, parameters,
+   subject state, or policy, and is not obliged to require every
+   advertised claim for every operation.  Clients SHOULD treat the
+   advertised list as a hint for Access Token acquisition and SHOULD NOT
+   depend on it as a complete or stable contract.
+
+   As with required_claims in error responses and challenges, and
+   requested_claims in Token Endpoint requests, claim names in the
+   metadata are interpreted in the context of the (issuer, subject,
+   audience, Client) tuple of any Access Token that will be presented at
+   the resource; see Section 6.3.
 
 5.  End-to-End Examples
 
@@ -560,7 +739,7 @@ Table of Contents
       |<--------------------------------------|
       |                    |                  |
       |  TokenExchange     |                  |
-      |  +required_claims  |                  |
+      |  +requested_claims |                  |
       |------------------->|                  |
       |                    |                  |
       |  Token with        |                  |
@@ -592,7 +771,7 @@ Table of Contents
       |<----------------------------------------|
       |                    |                    |
       |  TokenExchange     |                    |
-      |  +required_claims  |                    |
+      |  +requested_claims |                    |
       |------------------->|                    |
       |                    |                    |
       |  AT2 (carries     |                    |
@@ -624,10 +803,16 @@ Table of Contents
    [RFC7522] and [RFC7523] define specific profiles for SAML 2.0 and JWT
    assertions respectively.  The insufficient_claims error code defined
    here applies uniformly to Token Endpoint requests using any of these
-   grants.  The required_claims request parameter (Section 3.3) is
-   defined for the Token Exchange retry case; for other assertion-based
-   grants, the Client obtains a richer assertion using whatever
-   mechanism its assertion provider supports.
+   grants.  The requested_claims request parameter (Section 3.3) is
+   defined for Token Exchange and Refresh Token grants and is not used
+   with JWT Bearer or SAML Bearer requests directly; the assertion
+   presented in those grants is obtained out of band, and obtaining a
+   richer assertion is governed by the assertion provider's protocol.
+   Where the assertion provider is itself an OAuth 2.0 Authorization
+   Server, a Client receiving insufficient_claims would typically obtain
+   a richer assertion via Token Exchange or via an interactive flow
+   using the OpenID Connect claims request parameter, and then present
+   the new assertion in a fresh JWT Bearer or SAML Bearer request.
 
 6.3.  OAuth 2.0 scope Parameter
 
@@ -642,52 +827,97 @@ Table of Contents
    Authorization Server may apply.  The Client can forward a precise
    requirement without knowing that mapping.
 
+   required_claims shares with scope the property that values are
+   interpreted in the context of the (issuer, subject, audience, Client)
+   tuple of the request.  A claim name has no globally registered
+   semantics that override an Authorization Server's local release
+   policy; the same name may carry different content, format, or release
+   rules at different Authorization Servers, for different subjects,
+   audiences, or Clients.  A Client forwarding claim names between a
+   recipient (in required_claims) and an Issuing Authorization Server
+   (in requested_claims) is relying on those two parties having a shared
+   understanding of the listed names, typically through registered
+   claims or profile alignment.
+
    required_claims complements scope rather than replacing it.  A Client
    retrying at the Token Endpoint MAY include both parameters; the
    Authorization Server applies its scope semantics as it otherwise
    would, and additionally takes required_claims into account.
 
-6.4.  OpenID Connect claims Request Parameter
+6.4.  OAuth 2.0 Resource Indicators (RFC 8707)
 
-   OpenID Connect Core 1.0 [OpenID.Core] (Section 5.5) defines a claims
-   request parameter for use at the Authorization Endpoint and the Token
-   Endpoint, carrying a JSON object that requests individual claims for
-   the ID Token and UserInfo responses with optional essential/voluntary
-   semantics and value constraints.
+   [RFC8707] allows a Client to specify the resource (the resource
+   parameter) at which the requested token will be used.  The
+   Authorization Server may use that signal, together with the audience
+   parameter, to determine the audience of the issued token and to apply
+   audience-specific claim release policy.  Two consequences follow:
 
-   This document does not reuse the OIDC claims parameter for the
-   following reasons:
+   1.  Claims releasable to one audience may not be releasable to
+       another.  A retry under Section 3.3 that changes the audience or
+       resource value from the original request may obtain a token under
+       different policy; the Authorization Server may include or omit
+       different claims, and the recipient that returned
+       insufficient_claims may not accept the re-issued token.  For this
+       reason Section 3.3 requires the Client to preserve the original
+       audience and, where applicable, resource on retry.
 
-   *  Encoding.  OIDC claims carries a JSON object value inside a form
-      parameter, requiring nested escaping and increasing request size.
-      required_claims carries a flat list of names suitable for a Token
-      Endpoint application/x-www-form-urlencoded body, a JSON error
-      response body, and a WWW-Authenticate challenge.
+   2.  A Processing Authorization Server or Protected Resource that
+       returns insufficient_claims does so for a specific audience.  A
+       required_claims value that is meaningful for one audience may be
+       meaningless, or trigger different release policy, for another.
 
-   *  Scope of effect.  OIDC claims requests claims into specific
-      OpenID-defined response artifacts (ID Token, UserInfo).
-      required_claims requests claims into any issued token (Access
-      Token, Token Exchange-issued subject token), including non-OIDC
-      types.
+6.5.  OpenID Connect claims Request Parameter
 
-   *  Semantics.  OIDC claims distinguishes essential and voluntary
-      claims and allows value constraints. required_claims defers all
-      such expressivity and treats every requested claim as advisory to
-      the Authorization Server.  Profiles that need richer expressivity
-      can define their own parameter.
+   OpenID Connect Core 1.0 ([OpenID.Core], Section 5.5) defines a claims
+   request parameter for use at the OIDC Authorization Endpoint and
+   Token Endpoint.  The value is a JSON object that requests individual
+   claims for the ID Token and UserInfo responses, with optional
+   essential/voluntary semantics and value constraints.
 
-   An Authorization Server MAY support both claims and required_claims.
-   When both are present, the Authorization Server processes each
-   according to its defining specification; this document does not
-   define an interaction between them.
+   This document defers to the OIDC claims parameter for any response to
+   insufficient_claims that requires a new authorization request,
+   including the authorization_code grant, the device authorization
+   grant, the CIBA grant, and similar interactive flows.  In these
+   cases:
 
-   A Client that receives an insufficient_claims challenge at a
-   Protected Resource (see Section 4) and that originally obtained its
-   Access Token via an OpenID Connect Authorization Endpoint flow MAY
-   use the OIDC claims request parameter to obtain a richer Access
-   Token, as described in Section 4.
+   *  The Client SHOULD initiate a new authorization request to the
+      Authorization Server and include a claims parameter naming the
+      claims that were enumerated in the required_claims field of the
+      insufficient_claims response or challenge.
 
-6.5.  OAuth 2.0 Bearer Token Usage (RFC 6750) and Step-Up Authentication
+   *  The Authorization Server applies its normal interactive-flow
+      policy: it MAY prompt the end user for consent, perform additional
+      authentication, or otherwise involve the user before releasing
+      newly requested claims.  This is the natural place to handle such
+      policy, which the back-channel requested_claims parameter
+      (Section 3.3) cannot accommodate.
+
+   *  On completion of the new authorization request, the Client obtains
+      an Access Token (and, where applicable, ID Token) carrying the
+      requested claims, and retries the original request.
+
+   The requested_claims parameter defined in this document is not a
+   substitute for the OIDC claims parameter for interactive grants; the
+   two parameters target different stages of the OAuth 2.0 flow and
+   different deployment patterns:
+
+   *  OIDC claims is presented at an Authorization or backchannel-
+      authentication request, where end-user consent and authentication
+      can be evaluated.  It supports essential/voluntary claims and
+      value constraints.
+
+   *  requested_claims is presented at the Token Endpoint as part of a
+      back-channel re-issuance request (Token Exchange or Refresh
+      Token), where no end-user interaction occurs.  It is a flat hint
+      to the Authorization Server about which claims should be included
+      in the issued token.
+
+   An Authorization Server MAY support both claims (on its OIDC
+   endpoints) and requested_claims (on its Token Endpoint Token Exchange
+   and Refresh Token requests); this document does not define an
+   interaction between them.
+
+6.6.  OAuth 2.0 Bearer Token Usage (RFC 6750) and Step-Up Authentication
       (RFC 9470)
 
    [RFC6750] defines the Bearer authentication scheme used at the
@@ -698,7 +928,7 @@ Table of Contents
    Section 4 of this document follows the same challenge pattern but
    addresses claim content rather than scope or authentication context.
 
-6.6.  OAuth 2.0 Rich Authorization Requests (RFC 9396)
+6.7.  OAuth 2.0 Rich Authorization Requests (RFC 9396)
 
    [RFC9396] carries structured request objects (authorization_details)
    as JSON. required_claims is deliberately flat: claim names are atomic
@@ -720,32 +950,33 @@ Table of Contents
 7.2.  Disclosure of Issued Claims
 
    When an Authorization Server includes additional claims in a re-
-   issued token in response to required_claims, those claims may be
+   issued token in response to requested_claims, those claims may be
    readable by the Client (for example, a JWT-formatted token can be
    parsed by anyone holding the token).  Authorization Servers SHOULD
    apply the same release policy as for any other token issued to the
-   same Client, audience, and subject.  Where the intended consumer is
+   same subject, audience, and Client.  Where the intended consumer is
    the recipient only and the Client is treated as a transport, security
    guidance from [I-D.ietf-oauth-identity-assertion-authz-grant] on
    audience scoping and (where supported) encryption of the token
    applies.
 
    The Authorization Server is the policy authority for release.
-   Receipt of a required_claims parameter from a Client MUST NOT be
+   Receipt of a requested_claims parameter from a Client MUST NOT be
    treated as user consent, subject release authorization, or any other
    form of override of the Authorization Server's configured policy.  An
-   Authorization Server that finds that satisfying required_claims would
-   violate policy MUST decline the affected claims and MAY decline the
-   request.
+   Authorization Server that finds that satisfying requested_claims
+   would violate policy MUST decline the affected claims and MAY decline
+   the request.
 
 7.3.  Untrusted Input
 
-   A recipient constructing required_claims, and an Authorization Server
-   consuming it, MUST treat the parameter value as untrusted input until
-   validated.  Implementations MUST validate that each token in the list
-   conforms to the syntax constraints stated in this document and MUST
-   NOT pass the value into log formatters, database queries, or claim
-   release rules without proper escaping or parameterization.
+   A recipient constructing a required_claims field, and an
+   Authorization Server consuming a requested_claims parameter, MUST
+   treat the value as untrusted input until validated.  Implementations
+   MUST validate that each token in the list conforms to the syntax
+   constraints stated in this document and MUST NOT pass the value into
+   log formatters, database queries, or claim release rules without
+   proper escaping or parameterization.
 
 7.4.  Replay and Caching
 
@@ -761,7 +992,7 @@ Table of Contents
    A recipient returning insufficient_claims invites the Client to
    perform an additional Token Endpoint request against an Authorization
    Server.  Implementations on all sides SHOULD apply standard rate
-   limiting to protect their endpoints.  As noted in Section 3.5 and
+   limiting to protect their endpoints.  As noted in Section 3.6 and
    Section 4, Clients SHOULD NOT retry indefinitely.
 
 7.6.  Trust Between Recipient and Issuing Authorization Server
@@ -769,11 +1000,12 @@ Table of Contents
    This specification does not establish trust between a recipient
    (Processing Authorization Server or Protected Resource) and the
    Issuing Authorization Server.  The Client mediates between them and
-   can add, remove, or modify required_claims values.  For this reason
-   required_claims is advisory: the Issuing Authorization Server SHOULD
-   evaluate the request against the Client's identity, the requested
-   audience, and its local release policy.  It MUST NOT infer a
-   recipient requirement from required_claims alone, nor treat the
+   can add, remove, or modify the claim list it received in
+   required_claims before forwarding it as requested_claims.  For this
+   reason requested_claims is advisory: the Issuing Authorization Server
+   SHOULD evaluate the request against the Client's identity, the
+   requested audience, and its local release policy.  It MUST NOT infer
+   a recipient requirement from requested_claims alone, nor treat the
    parameter's presence as authorization to release any claim.
 
 8.  Privacy Considerations
@@ -793,7 +1025,7 @@ Table of Contents
 
    Operators of Issuing Authorization Servers SHOULD apply consent,
    contractual, or regulatory release controls before honoring any
-   specific entry in required_claims.
+   specific entry in requested_claims.
 
 9.  IANA Considerations
 
@@ -820,13 +1052,56 @@ Table of Contents
 
 9.2.  OAuth Parameters Registry
 
-   IANA is requested to add the following entry to the "OAuth
+   IANA is requested to add the following entries to the "OAuth
    Parameters" registry established by Section 11.2 of [RFC6749].
+
+9.2.1.  required_claims
 
    Name:  required_claims
 
-   Parameter Usage Location:  token request, token response, resource
-      access authentication challenge
+   Parameter Usage Location:  token response, resource access
+      authentication challenge
+
+   Change Controller:  IETF
+
+   Specification Document(s):  This document
+
+9.2.2.  requested_claims
+
+   Name:  requested_claims
+
+   Parameter Usage Location:  token request
+
+   Change Controller:  IETF
+
+   Specification Document(s):  This document
+
+9.3.  OAuth Protected Resource Metadata Registry
+
+   IANA is requested to add the following entry to the "OAuth Protected
+   Resource Metadata" registry established by Section 7.1 of [RFC9728].
+
+   Metadata Name:  required_claims
+
+   Metadata Description:  A JSON array of claim names enumerating claims
+      the Protected Resource may require in Access Tokens, advisory and
+      not necessarily a complete or stable contract; see Section 4.2.
+
+   Change Controller:  IETF
+
+   Specification Document(s):  This document
+
+9.4.  OAuth Authorization Server Metadata Registry
+
+   IANA is requested to add the following entry to the "OAuth
+   Authorization Server Metadata" registry established by Section 7.1 of
+   [RFC8414].
+
+   Metadata Name:  requested_claims_parameter_supported
+
+   Metadata Description:  Boolean value indicating whether the
+      Authorization Server supports the requested_claims Token Endpoint
+      request parameter defined in this document; see Section 3.4.
 
    Change Controller:  IETF
 
@@ -864,10 +1139,20 @@ Table of Contents
               DOI 10.17487/RFC8259, December 2017,
               <https://www.rfc-editor.org/rfc/rfc8259>.
 
+   [RFC8414]  Jones, M., Sakimura, N., and J. Bradley, "OAuth 2.0
+              Authorization Server Metadata", RFC 8414,
+              DOI 10.17487/RFC8414, June 2018,
+              <https://www.rfc-editor.org/rfc/rfc8414>.
+
    [RFC8693]  Jones, M., Nadalin, A., Campbell, B., Ed., Bradley, J.,
               and C. Mortimore, "OAuth 2.0 Token Exchange", RFC 8693,
               DOI 10.17487/RFC8693, January 2020,
               <https://www.rfc-editor.org/rfc/rfc8693>.
+
+   [RFC9728]  Jones, M.B., Hunt, P., and A. Parecki, "OAuth 2.0
+              Protected Resource Metadata", RFC 9728,
+              DOI 10.17487/RFC9728, April 2025,
+              <https://www.rfc-editor.org/rfc/rfc9728>.
 
 10.2.  Informative References
 
@@ -899,6 +1184,10 @@ Table of Contents
               (JWT) Profile for OAuth 2.0 Client Authentication and
               Authorization Grants", RFC 7523, DOI 10.17487/RFC7523, May
               2015, <https://www.rfc-editor.org/rfc/rfc7523>.
+
+   [RFC8707]  Campbell, B., Bradley, J., and H. Tschofenig, "Resource
+              Indicators for OAuth 2.0", RFC 8707, DOI 10.17487/RFC8707,
+              February 2020, <https://www.rfc-editor.org/rfc/rfc8707>.
 
    [RFC9396]  Lodderstedt, T., Richer, J., and B. Campbell, "OAuth 2.0
               Rich Authorization Requests", RFC 9396,
