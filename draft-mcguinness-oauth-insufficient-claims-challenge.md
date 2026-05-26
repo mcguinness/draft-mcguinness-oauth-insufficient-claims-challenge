@@ -76,7 +76,7 @@ Identity Assertion Authorization Grant.
 
 # Introduction
 
-OAuth 2.0 Token Exchange {{!RFC8693}} allows a Client to exchange one
+OAuth 2.0 Token Exchange {{RFC8693}} allows a Client to exchange one
 security token for another. In many deployments, the Authorization
 Server processing the Token Exchange request needs the subject token
 to carry specific claims about the subject (for example, an
@@ -101,7 +101,7 @@ This specification defines:
 
 2. A `required_claims` error response parameter that enumerates the
    missing claims using the same syntax as the `scope` parameter
-   ({{Section 3.3 of !RFC6749}}).
+   ({{Section 3.3 of RFC6749}}).
 
 3. A `required_claims` Token Exchange request parameter that the
    Client forwards to the Authorization Server that issued the subject
@@ -113,7 +113,7 @@ Authorization Server opts in by returning the `insufficient_claims`
 error; a Client that does not recognize the error treats the response
 as it would any other Token Exchange failure. An Issuing Authorization
 Server that does not recognize the `required_claims` request parameter
-ignores it per {{Section 3.2 of !RFC6749}} and processes the request
+ignores it per {{Section 3.2 of RFC6749}} and processes the request
 as it otherwise would; the Client may then receive a second
 `insufficient_claims` response from the Processing Authorization
 Server, which per {{no-loop}} it treats as a terminal failure. The
@@ -123,10 +123,10 @@ otherwise release, and remains the policy authority.
 
 ## Why a New Error Code
 
-{{!RFC6749}} defines `invalid_grant` for tokens that are rejected.
-{{?RFC6750}} defines `insufficient_scope`, returned by a protected
+{{RFC6749}} defines `invalid_grant` for tokens that are rejected.
+{{RFC6750}} defines `insufficient_scope`, returned by a protected
 resource when a presented Access Token is otherwise valid but does not
-carry sufficient `scope` to fulfil the request. {{?RFC9470}} defines
+carry sufficient `scope` to fulfil the request. {{RFC9470}} defines
 `insufficient_user_authentication`, returned by a protected resource
 when an Access Token is otherwise valid but the authentication context
 behind it is insufficient. The condition addressed here is parallel to
@@ -140,7 +140,7 @@ subject token.
 ## Motivating Use Case
 
 A common deployment pattern, formalized by the Identity Assertion
-Authorization Grant {{?I-D.ietf-oauth-identity-assertion-authz-grant}},
+Authorization Grant {{I-D.ietf-oauth-identity-assertion-authz-grant}},
 uses Token Exchange to convey an identity assertion issued by an
 Identity Provider (IdP) Authorization Server to a Resource
 Authorization Server (RAS) governing a downstream resource. When the
@@ -161,10 +161,10 @@ yet satisfy.
 
 {::boilerplate bcp14-tagged}
 
-This document uses the following terms from {{!RFC6749}}: Client,
+This document uses the following terms from {{RFC6749}}: Client,
 Authorization Server, Access Token, and error response.
 
-This document uses the following terms from {{!RFC8693}}: Token
+This document uses the following terms from {{RFC8693}}: Token
 Exchange, subject token, and requested token type.
 
 This document additionally uses the following terms:
@@ -185,18 +185,18 @@ Processing Authorization Server:
 
 Claim:
 : An attribute of the subject or the assertion, as defined in
-  {{Section 4 of !RFC7519}} for JWT-formatted tokens and generalized
+  {{Section 4 of RFC7519}} for JWT-formatted tokens and generalized
   here to any token format that carries named claims.
 
 
 # Insufficient Claims Error Response
 
 A Processing Authorization Server receiving a Token Exchange request
-{{!RFC8693}} MUST first validate the subject token per its own
+{{RFC8693}} MUST first validate the subject token per its own
 acceptance rules and the rules of the grant profile in use. If the
 token is rejected for cryptographic, audience, issuer, type, or
 freshness reasons, the server MUST respond with the applicable error
-from {{Section 5.2 of !RFC6749}} (typically `invalid_grant`) rather
+from {{Section 5.2 of RFC6749}} (typically `invalid_grant`) rather
 than the error defined here.
 
 If the subject token is acceptable but does not carry claims
@@ -213,7 +213,7 @@ The error code is:
   Authorization Server to fulfil the request.
 
 The error code is returned in the `error` parameter of the Token
-Exchange error response, formatted per {{Section 5.2 of !RFC6749}}
+Exchange error response, formatted per {{Section 5.2 of RFC6749}}
 with HTTP status code 400.
 
 ## required_claims Response Parameter
@@ -225,13 +225,13 @@ The `required_claims` value is a string containing a space-delimited,
 case-sensitive list of claim names. Each claim name is the name of a
 claim as it would appear in the subject token (for example, `email`,
 `name`, `given_name`, `family_name`). Claim names use the syntax of
-`scope-token` from {{Section 3.3 of !RFC6749}}: each claim name MUST
+`scope-token` from {{Section 3.3 of RFC6749}}: each claim name MUST
 consist only of characters in the ranges `%x21`, `%x23-5B`, and
 `%x5D-7E`. In particular, claim names MUST NOT contain the SP
 (`%x20`), DQUOTE (`%x22`), or backslash (`%x5C`) characters. The
 order of names in the list is not significant.
 
-When carried in a JSON error response body ({{!RFC8259}}), the value
+When carried in a JSON error response body ({{RFC8259}}), the value
 is a JSON string. When carried as a form parameter in a Token Exchange
 request (see {{request-param}}), the same syntactic value is encoded
 per `application/x-www-form-urlencoded` rules; the surrounding JSON
@@ -265,7 +265,7 @@ A Processing Authorization Server MUST NOT include in
 `required_claims` any claim name whose semantics are not defined by a
 registered claims registry (such as the JSON Web Token Claims
 registry), a registered profile (such as OpenID Connect Core
-{{?OpenID.Core}}), or prior agreement with the population of Issuing
+{{OpenID.Core}}), or prior agreement with the population of Issuing
 Authorization Servers it expects to interoperate with.
 
 A Processing Authorization Server SHOULD NOT include the same claim
@@ -279,7 +279,7 @@ request for that claim.
 A Client that receives an `insufficient_claims` error response from a
 Processing Authorization Server, and that supports the mechanism
 defined in this document, MAY send a Token Exchange request
-{{!RFC8693}} to an Issuing Authorization Server, including the
+{{RFC8693}} to an Issuing Authorization Server, including the
 `required_claims` parameter defined in this section, in order to
 obtain a re-issued subject token.
 
@@ -306,7 +306,7 @@ This document extends the Token Exchange request ({{Section 2.1 of
   to the `required_claims` error response parameter defined in this
   document. When included in the Token Exchange request, the value is
   encoded as an `application/x-www-form-urlencoded` form parameter, as
-  described by {{Section 2.1 of !RFC8693}}. The `required_claims`
+  described by {{Section 2.1 of RFC8693}}. The `required_claims`
   parameter MUST NOT appear more than once in a single Token Exchange
   request. A Client SHOULD NOT include the same claim name more than
   once within the value; an Issuing Authorization Server receiving
@@ -380,12 +380,12 @@ value.
 
 The following non-normative example illustrates the full exchange
 using the Identity Assertion Authorization Grant profile
-{{?I-D.ietf-oauth-identity-assertion-authz-grant}}, where the
+{{I-D.ietf-oauth-identity-assertion-authz-grant}}, where the
 Processing Authorization Server is the Resource Authorization Server
 (RAS) and the Issuing Authorization Server is the Identity Provider
 (IdP) Authorization Server.
 
-~~~ aasvg
+~~~ ascii-art
 Client                IdP AS              RAS
    |                    |                  |
    |  TokenExchange     |                  |
@@ -424,7 +424,7 @@ Client                IdP AS              RAS
 
 ## Identity Assertion Authorization Grant
 
-{{?I-D.ietf-oauth-identity-assertion-authz-grant}} defines the
+{{I-D.ietf-oauth-identity-assertion-authz-grant}} defines the
 `urn:ietf:params:oauth:token-type:id-jag` token type and the role of
 the Resource Authorization Server in a cross-domain identity
 assertion flow. With the mechanism defined here, specific claim
@@ -434,7 +434,7 @@ Server retaining policy authority over release.
 
 ## OAuth 2.0 `scope` Parameter
 
-The `scope` parameter ({{Section 3.3 of !RFC6749}}) is a coarse,
+The `scope` parameter ({{Section 3.3 of RFC6749}}) is a coarse,
 Authorization Server-specific authorization request signal. In some
 deployment profiles, including OpenID Connect, specific scope values
 (for example, `profile`, `email`) imply the issuance of specific
@@ -453,7 +453,7 @@ account.
 
 ## OpenID Connect `claims` Request Parameter
 
-OpenID Connect Core 1.0 {{?OpenID.Core}} (Section 5.5) defines a
+OpenID Connect Core 1.0 {{OpenID.Core}} (Section 5.5) defines a
 `claims` request parameter for use at the Authorization Endpoint and
 the Token Endpoint, carrying a JSON object that requests individual
 claims for the ID Token and UserInfo responses with optional
@@ -487,7 +487,7 @@ does not define an interaction between them.
 
 ## OAuth 2.0 Rich Authorization Requests (RFC 9396)
 
-{{?RFC9396}} carries structured request objects
+{{RFC9396}} carries structured request objects
 (`authorization_details`) as JSON. `required_claims` is deliberately
 flat: claim names are atomic tokens and do not require structured
 encoding. Profiles needing per-claim value constraints or schema
@@ -516,7 +516,7 @@ Authorization Servers SHOULD apply the same release policy as for any
 other token issued to the same Client, audience, and subject. Where
 the intended consumer is the Processing Authorization Server only and
 the Client is treated as a transport, security guidance from
-{{?I-D.ietf-oauth-identity-assertion-authz-grant}} on audience scoping
+{{I-D.ietf-oauth-identity-assertion-authz-grant}} on audience scoping
 and (where supported) encryption of the token applies.
 
 The Issuing Authorization Server is the policy authority for release.
@@ -593,7 +593,7 @@ specific entry in `required_claims`.
 ## OAuth Extensions Error Registry
 
 IANA is requested to add the following entry to the "OAuth Extensions
-Error" registry established by {{Section 11.4 of !RFC6749}}.
+Error" registry established by {{Section 11.4 of RFC6749}}.
 
 Name:
 : `insufficient_claims`
@@ -619,7 +619,7 @@ Description:
 ## OAuth Parameters Registry
 
 IANA is requested to add the following entry to the "OAuth Parameters"
-registry established by {{Section 11.2 of !RFC6749}}.
+registry established by {{Section 11.2 of RFC6749}}.
 
 ### required_claims
 
