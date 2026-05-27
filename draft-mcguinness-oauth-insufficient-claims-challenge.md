@@ -117,7 +117,7 @@ It defines:
    authentication challenges at Protected Resources
    ({{Section 3 of RFC6750}}).
 
-2. A `required_claims` parameter (a JSON array of claim names)
+2. A `required_claims` parameter (a JSON array of claim entries)
    carried in Token Endpoint error response bodies, in JSON response
    bodies accompanying Protected Resource Bearer challenges, and
    (optionally) in OAuth 2.0 Protected Resource Metadata
@@ -394,12 +394,12 @@ retain their meaning only when both of the following hold:
 * The Issuing and Processing Authorization Servers share an
   understanding of the claim names and constraint values involved.
 
-A recipient SHOULD NOT include the same claim name in more than one
-entry of the array. A Client or Issuing Authorization Server
-receiving duplicate entries for the same claim name MUST treat them
-as a single request for that claim and applies the union of any
-constraints; if the constraints conflict, the recipient's behavior
-on the re-issued credential is undefined.
+A recipient MUST NOT include the same claim name in more than one
+entry of the array. A Client receiving duplicate entries for the
+same claim name in `required_claims` MUST treat the value as
+malformed and MUST NOT forward it as `requested_claims`. An
+Authorization Server receiving duplicate entries for the same claim
+name in `requested_claims` MUST treat the parameter as malformed.
 
 ## Returned at the Token Endpoint {#token-endpoint}
 
@@ -544,8 +544,8 @@ RFC6749}}) with the following parameter:
   parameter. The `requested_claims` parameter MUST NOT appear more
   than once in a single Token Endpoint request. A Client SHOULD NOT
   include the same claim name in more than one entry of the array.
-  An Authorization Server receiving duplicate entries MUST treat
-  them as a single request for that claim.
+  An Authorization Server receiving duplicate entries for the same
+  claim name MUST treat the parameter as malformed.
 
 The `requested_claims` parameter is defined for use with the OAuth
 2.0 Token Exchange grant ({{RFC8693}}) and the OAuth 2.0 Refresh
@@ -572,15 +572,15 @@ different policy to apply; see {{rel-scope}} and
 {{rel-resource-indicators}}.
 
 A Client MUST ensure that the `requested_claims` value it sends is
-a well-formed JSON array of strings conforming to the syntax defined
-in this document, and MUST NOT forward malformed input received in
-a `required_claims` field from a recipient.
+a well-formed JSON array of claim entries conforming to the syntax
+defined in {{response-param}}, and MUST NOT forward malformed input
+received in a `required_claims` field from a recipient.
 
 A Client SHOULD forward the value received in `required_claims`
 verbatim as the value of `requested_claims`, percent-encoded for
 the `application/x-www-form-urlencoded` body. A Client MAY include
-additional claim names in the array based on local knowledge of the
-target resource.
+additional entries (bare claim names or constraint objects) in the
+array based on local knowledge of the target resource.
 
 ### Use with Token Exchange
 
@@ -696,8 +696,9 @@ In particular, the Authorization Server:
   it cannot satisfy the constraint.
 
 * An Authorization Server that does not support constraint entries
-  MAY ignore the `value` and `values` members and treat the entry as
-  the bare-string form (any value acceptable).
+  MUST NOT ignore the `value` or `values` members and treat the
+  entry as the bare-string form. It MUST either decline the
+  constrained claim or reject the request with `invalid_request`.
 
 Issuance of a token in response to a `requested_claims` request is
 not an assertion by the Authorization Server that all requested
@@ -1004,9 +1005,12 @@ grant, the CIBA grant, and similar interactive flows. In these
 cases:
 
 * The Client SHOULD initiate a new authorization request to the
-  Authorization Server and include a `claims` parameter naming the
-  claims that were enumerated in the `required_claims` field of the
-  `insufficient_claims` response or challenge.
+  Authorization Server and include a `claims` parameter reflecting
+  the entries enumerated in the `required_claims` field of the
+  `insufficient_claims` response or challenge. Mapping constraint
+  entries to OIDC `claims` syntax is deployment-specific and only
+  possible where the Authorization Server supports the corresponding
+  OIDC claim request semantics.
 
 * The Authorization Server applies its normal interactive-flow
   policy: it MAY prompt the end user for consent, perform additional
@@ -1031,9 +1035,9 @@ and different deployment patterns:
 
 * `requested_claims` is presented at the Token Endpoint as part of
   a back-channel re-issuance request (Token Exchange or Refresh
-  Token), where no end-user interaction occurs. It is a flat hint
-  to the Authorization Server about which claims should be included
-  in the issued token.
+  Token), where no end-user interaction occurs. It is a hint to the
+  Authorization Server about which claims should be included in the
+  issued token, with optional `value` or `values` constraints.
 
 An Authorization Server MAY support both `claims` (on its OIDC
 endpoints) and `requested_claims` (on Token Exchange and Refresh
@@ -1054,11 +1058,12 @@ context.
 ## OAuth 2.0 Rich Authorization Requests
 
 {{RFC9396}} carries structured request objects
-(`authorization_details`) as JSON. `required_claims` is deliberately
-flat: claim names are atomic tokens and do not require structured
-encoding. Profiles needing per-claim value constraints or schema
-references SHOULD define their own parameter rather than overload
-`required_claims`.
+(`authorization_details`) as JSON. The claim-entry syntax in this
+document is intentionally much narrower: it can name claims and, when
+needed, request equality against one value or one of a set of values.
+Profiles needing richer authorization semantics, schema references,
+or non-claim constraints SHOULD define their own parameter rather
+than overload `required_claims`.
 
 
 # Security Considerations
@@ -1111,10 +1116,12 @@ decline the request.
 A recipient constructing a `required_claims` field, and an
 Authorization Server consuming a `requested_claims` parameter, MUST
 treat the value as untrusted input until validated. Implementations
-MUST validate that each claim name in the array conforms to the
-syntax constraints stated in this document and MUST NOT pass the
-value into log formatters, database queries, or claim release rules
-without proper escaping or parameterization.
+MUST validate that each entry in the array conforms to the syntax
+constraints stated in this document, including claim-name syntax,
+mutual exclusion of `value` and `values`, and the absence of
+duplicate claim names. Implementations MUST NOT pass the value into
+log formatters, database queries, or claim release rules without
+proper escaping or parameterization.
 
 ## Replay and Caching
 
