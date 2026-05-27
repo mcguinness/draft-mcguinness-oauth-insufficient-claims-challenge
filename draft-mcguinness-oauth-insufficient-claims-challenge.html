@@ -9,22 +9,21 @@
 <meta content="
        This specification defines an OAuth 2.0 challenge mechanism by which
 an Authorization Server or Protected Resource signals that a
-credential presented by a Client is otherwise acceptable but does not
-carry the claims the recipient requires to fulfill the request. A new
-error code,  insufficient_claims , together with a  required_claims 
-parameter that enumerates the missing claims, lets the recipient
-indicate which claims are needed. The same challenge is used in
-Token Endpoint error responses, in Bearer authentication challenges
-at Protected Resources, and (optionally) in OAuth 2.0 Protected
-Resource Metadata. 
+credential presented by a Client is otherwise acceptable but lacks
+claims required to fulfill the request. A new error code,
+ insufficient_claims , together with a  required_claims  parameter
+that enumerates the missing claims, lets the recipient signal what
+is needed. The same challenge is used in Token Endpoint error
+responses, in Bearer authentication challenges at Protected
+Resources, and (optionally) in OAuth 2.0 Protected Resource
+Metadata. 
        The challenge is intentionally decoupled from how the Client
 responds. For back-channel re-issuance grants (OAuth 2.0 Token
 Exchange and Refresh Token), a Client uses the  requested_claims 
 Token Endpoint request parameter defined here. For grants that may
 require end-user interaction (authorization_code, device_code,
 CIBA), a Client uses an applicable front-channel claims request
-mechanism, such as the OpenID Connect  claims  request parameter
-when available. 
+mechanism, such as the OpenID Connect  claims  request parameter. 
        A motivating use case is just-in-time account provisioning by a
 Resource Authorization Server receiving an identity assertion under
 the Identity Assertion Authorization Grant. 
@@ -1104,22 +1103,21 @@ svg {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This specification defines an OAuth 2.0 challenge mechanism by which
 an Authorization Server or Protected Resource signals that a
-credential presented by a Client is otherwise acceptable but does not
-carry the claims the recipient requires to fulfill the request. A new
-error code, <code>insufficient_claims</code>, together with a <code>required_claims</code>
-parameter that enumerates the missing claims, lets the recipient
-indicate which claims are needed. The same challenge is used in
-Token Endpoint error responses, in Bearer authentication challenges
-at Protected Resources, and (optionally) in OAuth 2.0 Protected
-Resource Metadata.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+credential presented by a Client is otherwise acceptable but lacks
+claims required to fulfill the request. A new error code,
+<code>insufficient_claims</code>, together with a <code>required_claims</code> parameter
+that enumerates the missing claims, lets the recipient signal what
+is needed. The same challenge is used in Token Endpoint error
+responses, in Bearer authentication challenges at Protected
+Resources, and (optionally) in OAuth 2.0 Protected Resource
+Metadata.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">The challenge is intentionally decoupled from how the Client
 responds. For back-channel re-issuance grants (OAuth 2.0 Token
 Exchange and Refresh Token), a Client uses the <code>requested_claims</code>
 Token Endpoint request parameter defined here. For grants that may
 require end-user interaction (authorization_code, device_code,
 CIBA), a Client uses an applicable front-channel claims request
-mechanism, such as the OpenID Connect <code>claims</code> request parameter
-when available.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+mechanism, such as the OpenID Connect <code>claims</code> request parameter.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 <p id="section-abstract-3">A motivating use case is just-in-time account provisioning by a
 Resource Authorization Server receiving an identity assertion under
 the Identity Assertion Authorization Grant.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
