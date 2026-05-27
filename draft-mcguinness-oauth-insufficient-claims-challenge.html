@@ -21,8 +21,9 @@ the Client responds: for back-channel re-issuance grants (OAuth 2.0
 Token Exchange and Refresh Token), a Client uses the  requested_claims 
 Token Endpoint request parameter defined here; for grants that may
 require end-user interaction (authorization_code, device_code, CIBA),
-a Client uses the OpenID Connect  claims  request parameter. A
-motivating use case is just-in-time account provisioning by a
+a Client uses an applicable front-channel claims request mechanism,
+such as the OpenID Connect  claims  request parameter when available.
+A motivating use case is just-in-time account provisioning by a
 Resource Authorization Server receiving an identity assertion under
 the Identity Assertion Authorization Grant. 
     " name="description">
@@ -1068,7 +1069,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">McGuinness</td>
-<td class="center">Expires 27 November 2026</td>
+<td class="center">Expires 28 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1081,12 +1082,12 @@ svg {
 <dd class="internet-draft">draft-mcguinness-oauth-insufficient-claims-challenge-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-26" class="published">26 May 2026</time>
+<time datetime="2026-05-27" class="published">27 May 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-27">27 November 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-28">28 November 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1113,8 +1114,9 @@ the Client responds: for back-channel re-issuance grants (OAuth 2.0
 Token Exchange and Refresh Token), a Client uses the <code>requested_claims</code>
 Token Endpoint request parameter defined here; for grants that may
 require end-user interaction (authorization_code, device_code, CIBA),
-a Client uses the OpenID Connect <code>claims</code> request parameter. A
-motivating use case is just-in-time account provisioning by a
+a Client uses an applicable front-channel claims request mechanism,
+such as the OpenID Connect <code>claims</code> request parameter when available.
+A motivating use case is just-in-time account provisioning by a
 Resource Authorization Server receiving an identity assertion under
 the Identity Assertion Authorization Grant.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
@@ -1152,7 +1154,7 @@ the Identity Assertion Authorization Grant.<a href="#section-abstract-1" class="
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 27 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 28 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1233,10 +1235,10 @@ the Identity Assertion Authorization Grant.<a href="#section-abstract-1" class="
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-authorization-server-metada" class="internal xref">Authorization Server Metadata</a></p>
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-authorization-server-behavi" class="internal xref">Authorization Server Behavior</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
-                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-authorization-server-behavi" class="internal xref">Authorization Server Behavior</a></p>
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-authorization-server-metada" class="internal xref">Authorization Server Metadata</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6">
                 <p id="section-toc.1-1.3.2.6.1"><a href="#section-3.6" class="auto internal xref">3.6</a>.  <a href="#name-no-loop-guarantee" class="internal xref">No Loop Guarantee</a></p>
@@ -1354,10 +1356,48 @@ the Identity Assertion Authorization Grant.<a href="#section-abstract-1" class="
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-worked-end-to-end-example" class="internal xref">Worked End-to-End Example</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-actors" class="internal xref">Actors</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-step-1-client-obtains-an-id" class="internal xref">Step 1: Client obtains an ID-JAG from the IdP AS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-step-2-client-presents-the-" class="internal xref">Step 2: Client presents the ID-JAG to the RAS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.4">
+                <p id="section-toc.1-1.11.2.4.1"><a href="#appendix-A.4" class="auto internal xref">A.4</a>.  <a href="#name-step-3-ras-returns-insuffic" class="internal xref">Step 3: RAS returns <code>insufficient_claims</code></a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.5">
+                <p id="section-toc.1-1.11.2.5.1"><a href="#appendix-A.5" class="auto internal xref">A.5</a>.  <a href="#name-step-4-client-retries-the-t" class="internal xref">Step 4: Client retries the Token Exchange with <code>requested_claims</code></a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6">
+                <p id="section-toc.1-1.11.2.6.1"><a href="#appendix-A.6" class="auto internal xref">A.6</a>.  <a href="#name-step-5-idp-as-issues-an-enr" class="internal xref">Step 5: IdP AS issues an enriched ID-JAG</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.7">
+                <p id="section-toc.1-1.11.2.7.1"><a href="#appendix-A.7" class="auto internal xref">A.7</a>.  <a href="#name-step-6-client-re-presents-t" class="internal xref">Step 6: Client re-presents the enriched ID-JAG to the RAS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.8">
+                <p id="section-toc.1-1.11.2.8.1"><a href="#appendix-A.8" class="auto internal xref">A.8</a>.  <a href="#name-step-7-ras-provisions-alice" class="internal xref">Step 7: RAS provisions Alice's account and issues an Access Token</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.9">
+                <p id="section-toc.1-1.11.2.9.1"><a href="#appendix-A.9" class="auto internal xref">A.9</a>.  <a href="#name-step-8-client-calls-the-dow" class="internal xref">Step 8: Client calls the downstream API</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.10">
+                <p id="section-toc.1-1.11.2.10.1"><a href="#appendix-A.10" class="auto internal xref">A.10</a>. <a href="#name-avoiding-the-round-trip-wit" class="internal xref">Avoiding the Round Trip with Protected Resource Metadata</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.11">
+                <p id="section-toc.1-1.11.2.11.1"><a href="#appendix-A.11" class="auto internal xref">A.11</a>. <a href="#name-authorization-server-metadat" class="internal xref">Authorization Server Metadata Discovery</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1399,18 +1439,18 @@ challenges at Protected Resources (<span><a href="https://rfc-editor.org/rfc/rfc
 </li>
         <li id="section-1-4.2">
           <p id="section-1-4.2.1">A <code>required_claims</code> parameter that enumerates the missing claims
-using the same syntax as the <code>scope</code> parameter
-(<span><a href="https://rfc-editor.org/rfc/rfc6749#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>). The parameter is carried in the
-error response, in the authentication challenge, and (optionally)
-in OAuth 2.0 Protected Resource Metadata (<span>[<a href="#RFC9728" class="cite xref">RFC9728</a>]</span>).<a href="#section-1-4.2.1" class="pilcrow">¶</a></p>
+as a JSON array of claim names. The parameter is carried in the
+Token Endpoint JSON error response body, in the JSON response
+body that accompanies a Protected Resource Bearer authentication
+challenge, and (optionally) in OAuth 2.0 Protected Resource
+Metadata (<span>[<a href="#RFC9728" class="cite xref">RFC9728</a>]</span>).<a href="#section-1-4.2.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-1-4.3">
           <p id="section-1-4.3.1">A <code>requested_claims</code> Token Endpoint request parameter that a
 Client includes on a back-channel re-issuance request to obtain a
 credential carrying the indicated claims. This parameter is
 defined for use with the OAuth 2.0 Token Exchange (<span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>)
-and Refresh Token (<span><a href="https://rfc-editor.org/rfc/rfc6749#section-6" class="relref">Section 6</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>) grants only. Other
-grants are addressed below.<a href="#section-1-4.3.1" class="pilcrow">¶</a></p>
+and Refresh Token (<span><a href="https://rfc-editor.org/rfc/rfc6749#section-6" class="relref">Section 6</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>) grants only.<a href="#section-1-4.3.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-1-4.4">
           <p id="section-1-4.4.1">A <code>required_claims</code> OAuth 2.0 Protected Resource Metadata
@@ -1427,8 +1467,9 @@ request parameter at its Token Endpoint.<a href="#section-1-4.5.1" class="pilcro
 </li>
       </ol>
 <p id="section-1-5">The challenge applies to credentials presented at the Token Endpoint
-under any grant, and to Access Tokens presented at Protected
-Resources. The Client's response, however, is grant-specific:<a href="#section-1-5" class="pilcrow">¶</a></p>
+under any grant (see <a href="#token-endpoint" class="auto internal xref">Section 3</a>), and to Access Tokens
+presented at Protected Resources (see <a href="#resource" class="auto internal xref">Section 4</a>). The Client's
+response, however, is grant-specific:<a href="#section-1-5" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1-6.1">
           <p id="section-1-6.1.1">For OAuth 2.0 Token Exchange and Refresh Token grants, a Client
@@ -1440,8 +1481,9 @@ parameter defined in this document; see <a href="#request-param" class="auto int
           <p id="section-1-6.2.1">For grants that may require end-user interaction
 (authorization_code, device_code, CIBA, and similar), a Client
 responds by initiating a new authorization request, conveying its
-claim requirements via the OpenID Connect <code>claims</code> request
-parameter (Section 5.5 of <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>); see <a href="#rel-oidc-claims" class="auto internal xref">Section 6.5</a>.
+claim requirements via an applicable front-channel claims request
+mechanism, such as the OpenID Connect <code>claims</code> request parameter
+(Section 5.5 of <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>); see <a href="#rel-oidc-claims" class="auto internal xref">Section 6.5</a>.
 The <code>requested_claims</code> parameter defined here is not used with
 these grants.<a href="#section-1-6.2.1" class="pilcrow">¶</a></p>
 </li>
@@ -1487,17 +1529,21 @@ credential.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
           </h4>
 <p id="section-1.2.1-1">A common deployment pattern, formalized by the Identity Assertion
 Authorization Grant <span>[<a href="#I-D.ietf-oauth-identity-assertion-authz-grant" class="cite xref">I-D.ietf-oauth-identity-assertion-authz-grant</a>]</span>,
-uses Token Exchange to convey an identity assertion issued by an
+conveys an identity assertion (the ID-JAG, a signed JWT) from an
 Identity Provider (IdP) Authorization Server to a Resource
-Authorization Server (RAS) governing a downstream resource. When the
-subject does not yet have an account at the RAS, the RAS may perform
-just-in-time (JIT) account provisioning using the claims in the
-assertion; when the subject already has an account, the RAS may
-update it from those claims. Either operation requires a sufficient
-set of identity claims, and the required set varies per RAS. The
-mechanism defined here allows the RAS to enumerate the claims it
-needs and the Client to forward that requirement to the IdP
-Authorization Server.<a href="#section-1.2.1-1" class="pilcrow">¶</a></p>
+Authorization Server (RAS) governing a downstream resource. The
+Client obtains the ID-JAG from the IdP AS via OAuth 2.0 Token
+Exchange (<span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>) and presents the ID-JAG to the RAS via the
+JWT Bearer assertion grant (<span>[<a href="#RFC7523" class="cite xref">RFC7523</a>]</span>).<a href="#section-1.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-2">When the subject does not yet have an account at the RAS, the RAS
+may perform just-in-time (JIT) account provisioning using the claims
+in the assertion; when the subject already has an account, the RAS
+may update it from those claims. Either operation requires a
+sufficient set of identity claims, and the required set varies per
+RAS. The mechanism defined here allows the RAS to enumerate the
+claims it needs in an <code>insufficient_claims</code> response to the JWT
+Bearer request, and the Client to forward that requirement to the
+IdP AS in a follow-up Token Exchange request.<a href="#section-1.2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="resource-side-claim-requirements">
@@ -1648,29 +1694,37 @@ with HTTP status code 400.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-3.2-1">The error response <span class="bcp14">SHOULD</span> include a <code>required_claims</code> parameter
 enumerating the claims the Processing Authorization Server requires.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.2-2">The <code>required_claims</code> value is a space-delimited list of claim
-names. For example:<a href="#section-3.2-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3.2-3">
+<p id="section-3.2-2">In a JSON response body, the value of <code>required_claims</code> is a JSON
+array of strings, where each string is a single claim name. For
+example:<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-3.2-3">
 <pre>
-email given_name family_name
+"required_claims": ["email", "given_name", "family_name"]
 </pre><a href="#section-3.2-3" class="pilcrow">¶</a>
 </div>
-<p id="section-3.2-4">Each name identifies a claim as it appears in the credential (for
-example, the JSON member name in a JWT). Claim names use the
+<p id="section-3.2-4">Each claim name identifies a claim as it appears in the credential
+(for example, the JSON member name in a JWT). Claim names use the
 <code>scope-token</code> syntax of <span><a href="https://rfc-editor.org/rfc/rfc6749#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>: visible ASCII
 characters excluding space (<code>%x20</code>), double-quote (<code>%x22</code>), and
-backslash (<code>%x5C</code>). Names are case-sensitive, and the order of names
-in the list is not significant.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
-<p id="section-3.2-5">When carried in a JSON error response body (<span>[<a href="#RFC8259" class="cite xref">RFC8259</a>]</span>), the value
-is a JSON string. When carried as a form parameter in a Token
-Endpoint request (see <a href="#request-param" class="auto internal xref">Section 3.3</a>), the same syntactic value
-is encoded per <code>application/x-www-form-urlencoded</code> rules; the
-surrounding JSON quoting does not apply. Some registered JWT claim
-names are URIs and contain characters such as <code>:</code> and <code>/</code>; these are
-permitted by the <code>scope-token</code> syntax but <span class="bcp14">MUST</span> be percent-encoded
-when the value is carried in a form-encoded body.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
-<p id="section-3.2-6">Example error response:<a href="#section-3.2-6" class="pilcrow">¶</a></p>
-<div class="lang-http sourcecode" id="section-3.2-7">
+backslash (<code>%x5C</code>). Names are case-sensitive. The order of names
+in the array is not significant.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">The same JSON array shape is used wherever this document conveys a
+claim list in a JSON document, namely in Token Endpoint error
+response bodies (<span><a href="https://rfc-editor.org/rfc/rfc6749#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>), in Protected Resource
+error response bodies (<a href="#resource" class="auto internal xref">Section 4</a>), and in Protected Resource
+Metadata documents (<a href="#prm" class="auto internal xref">Section 4.2</a>). This aligns with the
+<code>scopes_supported</code> and <code>claims_supported</code> metadata conventions of
+<span>[<a href="#RFC8414" class="cite xref">RFC8414</a>]</span> and <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">When the same list is carried as the <code>requested_claims</code> parameter
+on an <code>application/x-www-form-urlencoded</code> Token Endpoint request
+(see <a href="#request-param" class="auto internal xref">Section 3.3</a>), the JSON array value is serialized to a
+JSON string and percent-encoded per <code>application/x-www-form-urlencoded</code>
+rules. This follows the precedent of <code>authorization_details</code>
+(<span>[<a href="#RFC9396" class="cite xref">RFC9396</a>]</span>). Characters that have special meaning in JSON or in
+form bodies, including <code>[</code>, <code>]</code>, <code>"</code>, and <code>,</code>, <span class="bcp14">MUST</span> be
+percent-encoded.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">Example error response:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="section-3.2-8">
 <pre>
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
@@ -1679,37 +1733,38 @@ Cache-Control: no-store
 {
   "error": "insufficient_claims",
   "error_description": "The presented credential is missing required claims.",
-  "required_claims": "email given_name family_name"
+  "required_claims": ["email", "given_name", "family_name"]
 }
-</pre><a href="#section-3.2-7" class="pilcrow">¶</a>
+</pre><a href="#section-3.2-8" class="pilcrow">¶</a>
 </div>
-<p id="section-3.2-8">The <code>required_claims</code> parameter is <span class="bcp14">OPTIONAL</span>. A Processing
+<p id="section-3.2-9">The <code>required_claims</code> parameter is <span class="bcp14">OPTIONAL</span>. A Processing
 Authorization Server that cannot or does not wish to enumerate the
 missing claims <span class="bcp14">MAY</span> return the error code without it; in that case
 the Client has no machine-readable basis for retry and <span class="bcp14">SHOULD</span> treat
 the response as a terminal failure unless out-of-band information is
-available.<a href="#section-3.2-8" class="pilcrow">¶</a></p>
-<p id="section-3.2-9">A Processing Authorization Server <span class="bcp14">MUST NOT</span> include in
+available.<a href="#section-3.2-9" class="pilcrow">¶</a></p>
+<p id="section-3.2-10">A Processing Authorization Server <span class="bcp14">MUST NOT</span> include in
 <code>required_claims</code> any claim name whose semantics are not defined by
 a registered claims registry (such as the JSON Web Token Claims
 registry), a registered profile (such as OpenID Connect Core
 <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>), or prior agreement with the population of Issuing
-Authorization Servers it expects to interoperate with.<a href="#section-3.2-9" class="pilcrow">¶</a></p>
-<p id="section-3.2-10">Claim names in <code>required_claims</code> are interpreted in the context of
+Authorization Servers it expects to interoperate with.<a href="#section-3.2-10" class="pilcrow">¶</a></p>
+<p id="section-3.2-11">Claim names in <code>required_claims</code> are interpreted in the context of
 the (issuer, subject, audience, Client) tuple of the request, in the
 same way as the <code>scope</code> parameter (<span><a href="https://rfc-editor.org/rfc/rfc6749#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>); see
 <a href="#rel-scope" class="auto internal xref">Section 6.3</a>. The Authorization Server's claim release policy, the
 content and format of issued claims, and the meaning attached to a
-given claim name are all scoped to that tuple. A value carried
-verbatim from a <code>required_claims</code> field in an <code>insufficient_claims</code>
-response into a <code>requested_claims</code> parameter on a retry Token
-Endpoint request only retains its meaning when the audience, subject,
-and Client are preserved, and the Issuing and Processing Authorization
-Servers share an understanding of the claim names involved.<a href="#section-3.2-10" class="pilcrow">¶</a></p>
-<p id="section-3.2-11">A Processing Authorization Server <span class="bcp14">SHOULD NOT</span> include the same claim
+given claim name are all scoped to that tuple.<a href="#section-3.2-11" class="pilcrow">¶</a></p>
+<p id="section-3.2-12">Claim names forwarded from a <code>required_claims</code> field in an
+<code>insufficient_claims</code> response into a <code>requested_claims</code> parameter
+on a retry Token Endpoint request retain their meaning only when
+the audience, subject, and Client are preserved, and the Issuing
+and Processing Authorization Servers share an understanding of the
+claim names involved.<a href="#section-3.2-12" class="pilcrow">¶</a></p>
+<p id="section-3.2-13">A Processing Authorization Server <span class="bcp14">SHOULD NOT</span> include the same claim
 name more than once. A Client or Issuing Authorization Server
 receiving duplicate claim names <span class="bcp14">MUST</span> treat the duplicates as a
-single request for that claim.<a href="#section-3.2-11" class="pilcrow">¶</a></p>
+single request for that claim.<a href="#section-3.2-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="request-param">
@@ -1722,17 +1777,17 @@ single request for that claim.<a href="#section-3.2-11" class="pilcrow">¶</a></
           <dt id="section-3.3-2.1">
 <code>requested_claims</code>:</dt>
           <dd style="margin-left: 1.5em" id="section-3.3-2.2">
-            <p id="section-3.3-2.2.1"><span class="bcp14">OPTIONAL</span>. A space-delimited list of claim names that the Client is
-requesting be included in the issued token. The syntax is
-identical to the <code>required_claims</code> error response parameter
-defined in this document. When included in a Token Endpoint
-request, the value is encoded as an
-<code>application/x-www-form-urlencoded</code> form parameter. The
-<code>requested_claims</code> parameter <span class="bcp14">MUST NOT</span> appear more than once in a
-single Token Endpoint request. A Client <span class="bcp14">SHOULD NOT</span> include the
-same claim name more than once within the value; an Authorization
-Server receiving duplicate claim names <span class="bcp14">MUST</span> treat them as a single
-request for that claim.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.3-2.2.1"><span class="bcp14">OPTIONAL</span>. A JSON array of claim names that the Client is
+requesting be included in the issued token. The array shape and
+claim-name syntax are identical to the <code>required_claims</code> parameter
+defined in <a href="#response-param" class="auto internal xref">Section 3.2</a>. When included in a Token Endpoint
+request, the JSON array is serialized to a JSON string and
+percent-encoded as the value of the <code>requested_claims</code> form
+parameter. The <code>requested_claims</code> parameter <span class="bcp14">MUST NOT</span> appear more
+than once in a single Token Endpoint request. A Client <span class="bcp14">SHOULD NOT</span>
+include the same claim name more than once in the array; an
+Authorization Server receiving duplicate claim names <span class="bcp14">MUST</span> treat
+them as a single request for that claim.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1742,32 +1797,45 @@ Token grant (<span><a href="https://rfc-editor.org/rfc/rfc6749#section-6" class=
 re-issuance flows in which the Client already holds a credential
 that the Authorization Server can use to determine eligibility for
 the requested claims, without a fresh end-user interaction. The
-parameter <span class="bcp14">MUST NOT</span> be used with the <code>authorization_code</code> grant, the
-<code>urn:openid:params:grant-type:ciba</code> grant, or other interactive
-grants in which the Authorization Server may need to involve the
-end user; see <a href="#interactive-grants" class="auto internal xref">Section 3.3.3</a> for guidance on those grants.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
-<p id="section-3.3-4">A Client <span class="bcp14">MUST</span> ensure that the <code>requested_claims</code> value it sends
-conforms to the syntax defined in this document. If a value received
-from a Processing Authorization Server in <code>required_claims</code> is
-malformed, the Client <span class="bcp14">MUST NOT</span> forward it. A Client <span class="bcp14">SHOULD</span> forward
-the value received in the <code>required_claims</code> field of the
-<code>insufficient_claims</code> error response verbatim as the
-<code>requested_claims</code> value, and <span class="bcp14">MAY</span> include additional claim names
-based on local knowledge of the target resource.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+parameter <span class="bcp14">MUST NOT</span> be used with grants that may require end-user
+interaction, including the <code>authorization_code</code> grant, the
+<code>urn:ietf:params:oauth:grant-type:device_code</code> grant, and the
+<code>urn:openid:params:grant-type:ciba</code> grant; see <a href="#interactive-grants" class="auto internal xref">Section 3.3.3</a>.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.3-4">When sending a request that carries <code>requested_claims</code>, the Client
+<span class="bcp14">MUST</span> identify the same audience or resource as the original request
+that produced the <code>insufficient_claims</code> response or challenge. For
+Token Exchange (<span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>), the Client uses the <code>audience</code> and/or
+<code>resource</code> request parameters defined by that specification. For
+Refresh Token requests, the Client uses the <code>resource</code> parameter
+defined by Resource Indicators (<span>[<a href="#RFC8707" class="cite xref">RFC8707</a>]</span>). The Authorization
+Server's release policy is scoped to the indicated audience or
+resource; changing it may cause a different policy to apply (see
+<a href="#rel-scope" class="auto internal xref">Section 6.3</a> and <a href="#rel-resource-indicators" class="auto internal xref">Section 6.4</a>).<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+<p id="section-3.3-5">A Client <span class="bcp14">MUST</span> ensure that the <code>requested_claims</code> value it sends is
+a well-formed JSON array of strings conforming to the syntax defined
+in this document, and <span class="bcp14">MUST NOT</span> forward malformed input received in
+a <code>required_claims</code> field from a Processing Authorization Server or
+Protected Resource.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+<p id="section-3.3-6">A Client <span class="bcp14">SHOULD</span> forward the value received in <code>required_claims</code>
+verbatim as the value of <code>requested_claims</code>, percent-encoded for
+the <code>application/x-www-form-urlencoded</code> body. A Client <span class="bcp14">MAY</span> include
+additional claim names in the array based on local knowledge of the
+target resource.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
 <div id="use-with-token-exchange">
 <section id="section-3.3.1">
           <h4 id="name-use-with-token-exchange">
 <a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-use-with-token-exchange" class="section-name selfRef">Use with Token Exchange</a>
           </h4>
-<p id="section-3.3.1-1">A Client retrying via Token Exchange sends a new Token Exchange
-request to the Issuing Authorization Server. The Client selects the
-<code>subject_token</code> and <code>subject_token_type</code> based on its established
-credential relationship with the Issuing Authorization Server; this
-is typically the same <code>subject_token</code> the Client originally exchanged
-at that Authorization Server. The Client <span class="bcp14">MUST</span> set the <code>audience</code>
-(and, if applicable, <code>resource</code>) parameters to identify the same
-Processing Authorization Server or resource as the original request.<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.3.1-2">Example request:<a href="#section-3.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-1">Under the OAuth 2.0 Token Exchange grant (<span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>), the Client
+sends a new request to the Issuing Authorization Server. The Client
+selects the <code>subject_token</code> and <code>subject_token_type</code> based on its
+established credential relationship with the Issuing Authorization
+Server; this is typically the same <code>subject_token</code> the Client
+originally exchanged at that Authorization Server.<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-2">The following example uses the ID-JAG token type from the Identity
+Assertion Authorization Grant
+(<span>[<a href="#I-D.ietf-oauth-identity-assertion-authz-grant" class="cite xref">I-D.ietf-oauth-identity-assertion-authz-grant</a>]</span>); any
+<code>requested_token_type</code> registered with IANA may be used.<a href="#section-3.3.1-2" class="pilcrow">¶</a></p>
 <div class="lang-http sourcecode" id="section-3.3.1-3">
 <pre>
 POST /oauth2/token HTTP/1.1
@@ -1779,9 +1847,11 @@ grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
 &amp;subject_token=eyJhbGciOi...
 &amp;subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token
 &amp;audience=https%3A%2F%2Fapi.example.com%2F
-&amp;requested_claims=email+given_name+family_name
+&amp;requested_claims=%5B%22email%22%2C%22given_name%22%2C%22family_name%22%5D
 </pre><a href="#section-3.3.1-3" class="pilcrow">¶</a>
 </div>
+<p id="section-3.3.1-4">The <code>requested_claims</code> value above is the URL-encoded form of the
+JSON array <code>["email","given_name","family_name"]</code>.<a href="#section-3.3.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="use-with-refresh-token">
@@ -1805,17 +1875,21 @@ Content-Type: application/x-www-form-urlencoded
 
 grant_type=refresh_token
 &amp;refresh_token=8xLOxBtZp8...
-&amp;audience=https%3A%2F%2Fapi.example.com%2F
-&amp;requested_claims=email+department
+&amp;resource=https%3A%2F%2Fapi.example.com%2F
+&amp;requested_claims=%5B%22email%22%2C%22department%22%5D
 </pre><a href="#section-3.3.2-3" class="pilcrow">¶</a>
 </div>
-<p id="section-3.3.2-4">The Authorization Server applies its normal Refresh Token policy,
+<p id="section-3.3.2-4">The <code>requested_claims</code> value above is the URL-encoded form of the
+JSON array <code>["email","department"]</code>.<a href="#section-3.3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.3.2-5">The Authorization Server applies its normal Refresh Token policy,
 including any policy that would have applied had the Client
 requested those claims at the original authorization. An
-Authorization Server that would require fresh end-user consent to
-release a requested claim <span class="bcp14">MAY</span> decline that claim or respond with an
-error that prompts the Client to initiate a new authorization
-request (see <a href="#interactive-grants" class="auto internal xref">Section 3.3.3</a>).<a href="#section-3.3.2-4" class="pilcrow">¶</a></p>
+Authorization Server that would require fresh end-user consent or
+re-authentication to release a requested claim <span class="bcp14">MAY</span> decline that
+claim, or respond with an OpenID Connect error such as
+<code>consent_required</code> or <code>interaction_required</code> (Section 3.1.2.6 of
+<span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>) that prompts the Client to initiate a new
+authorization request (see <a href="#interactive-grants" class="auto internal xref">Section 3.3.3</a>).<a href="#section-3.3.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="interactive-grants">
@@ -1823,14 +1897,13 @@ request (see <a href="#interactive-grants" class="auto internal xref">Section 3.
           <h4 id="name-interactive-grants">
 <a href="#section-3.3.3" class="section-number selfRef">3.3.3. </a><a href="#name-interactive-grants" class="section-name selfRef">Interactive Grants</a>
           </h4>
-<p id="section-3.3.3-1">The <code>requested_claims</code> request parameter is not used with grants
-that may require end-user interaction, including the
-<code>authorization_code</code> grant, the <code>urn:ietf:params:oauth:grant-type:device_code</code>
-grant, and the <code>urn:openid:params:grant-type:ciba</code> grant. For these
-grants, a Client responding to <code>insufficient_claims</code> <span class="bcp14">SHOULD</span> initiate
-a new authorization request and convey its claim requirements using
-the OpenID Connect <code>claims</code> request parameter
-(Section 5.5 of <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>); see <a href="#rel-oidc-claims" class="auto internal xref">Section 6.5</a>.<a href="#section-3.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.3-1">For grants that may require end-user interaction (the
+<code>authorization_code</code> grant, the device authorization grant, the
+CIBA grant, and similar), a Client responding to
+<code>insufficient_claims</code> <span class="bcp14">SHOULD</span> initiate a new authorization request
+and convey its claim requirements using an applicable front-channel
+claims request mechanism, such as the OpenID Connect <code>claims</code> request
+parameter (Section 5.5 of <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>); see <a href="#rel-oidc-claims" class="auto internal xref">Section 6.5</a>.<a href="#section-3.3.3-1" class="pilcrow">¶</a></p>
 <p id="section-3.3.3-2">This separation lets the Authorization Server apply consent, user
 authentication, or interaction policies appropriate to the new claim
 release, rather than requiring those policies to be expressed as a
@@ -1839,74 +1912,76 @@ back-channel side effect.<a href="#section-3.3.3-2" class="pilcrow">¶</a></p>
 </div>
 </section>
 </div>
-<div id="as-metadata">
+<div id="authorization-server-behavior">
 <section id="section-3.4">
-        <h3 id="name-authorization-server-metada">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-authorization-server-metada" class="section-name selfRef">Authorization Server Metadata</a>
+        <h3 id="name-authorization-server-behavi">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-authorization-server-behavi" class="section-name selfRef">Authorization Server Behavior</a>
         </h3>
 <p id="section-3.4-1">An Authorization Server that supports the <code>requested_claims</code> request
+parameter on Token Exchange or Refresh Token requests <span class="bcp14">SHOULD</span> include
+each requested claim in the issued token, subject to its own policy.
+In particular, the Authorization Server:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.4-2.1">
+            <p id="section-3.4-2.1.1"><span class="bcp14">MUST NOT</span> release a claim it would not otherwise release under its
+configured policy for the subject, the audience, and the
+requesting Client. Receipt of <code>requested_claims</code> is not
+authorization to bypass consent, privacy, or release controls.<a href="#section-3.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.2">
+            <p id="section-3.4-2.2.1"><span class="bcp14">MUST NOT</span> treat <code>requested_claims</code> as a complete enumeration of the
+claims that should be issued. The Authorization Server <span class="bcp14">MAY</span> include
+additional claims it would normally include.<a href="#section-3.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.3">
+            <p id="section-3.4-2.3.1"><span class="bcp14">MAY</span> decline to include any specific requested claim. Declining to
+include a claim is not, by itself, a reason to fail the request.<a href="#section-3.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.4">
+            <p id="section-3.4-2.4.1"><span class="bcp14">SHOULD NOT</span> fail the request because of an unrecognized claim name
+in <code>requested_claims</code>.<a href="#section-3.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.4-3">Issuance of a token in response to a <code>requested_claims</code> request is
+not an assertion by the Authorization Server that all requested
+claims were honored. A Client wishing to verify that a specific
+claim is present in the re-issued token before retrying inspects the
+issued token using the mechanisms applicable to its format.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="as-metadata">
+<section id="section-3.5">
+        <h3 id="name-authorization-server-metada">
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-authorization-server-metada" class="section-name selfRef">Authorization Server Metadata</a>
+        </h3>
+<p id="section-3.5-1">An Authorization Server that supports the <code>requested_claims</code> request
 parameter defined in <a href="#request-param" class="auto internal xref">Section 3.3</a> <span class="bcp14">SHOULD</span> advertise that support
 in its OAuth 2.0 Authorization Server Metadata (<span>[<a href="#RFC8414" class="cite xref">RFC8414</a>]</span>) using
-the following metadata parameter:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3.4-2">
-          <dt id="section-3.4-2.1">
+the following metadata parameter:<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3.5-2">
+          <dt id="section-3.5-2.1">
 <code>requested_claims_parameter_supported</code>:</dt>
-          <dd style="margin-left: 1.5em" id="section-3.4-2.2">
-            <p id="section-3.4-2.2.1"><span class="bcp14">OPTIONAL</span>. Boolean value indicating whether the Authorization Server
+          <dd style="margin-left: 1.5em" id="section-3.5-2.2">
+            <p id="section-3.5-2.2.1"><span class="bcp14">OPTIONAL</span>. Boolean value indicating whether the Authorization Server
 supports the <code>requested_claims</code> Token Endpoint request parameter
-defined in this document. If omitted, the default value is <code>false</code>.<a href="#section-3.4-2.2.1" class="pilcrow">¶</a></p>
+defined in this document. If omitted, the default value is <code>false</code>.<a href="#section-3.5-2.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
-<p id="section-3.4-3">A Client <span class="bcp14">MAY</span> consult this metadata to determine whether to send
+<p id="section-3.5-3">A Client <span class="bcp14">MAY</span> consult this metadata to determine whether to send
 <code>requested_claims</code> on a Token Exchange or Refresh Token request,
 including proactively on a first attempt where the Client expects
 specific claims will be needed. A Client <span class="bcp14">MUST NOT</span> rely on the absence
 or <code>false</code> value of this metadata to predict an Authorization
 Server's behavior on <code>requested_claims</code>; an Authorization Server that
 does not advertise support <span class="bcp14">MAY</span> still honor the parameter (consistent
-with <span><a href="https://rfc-editor.org/rfc/rfc6749#section-3.2" class="relref">Section 3.2</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>).<a href="#section-3.4-3" class="pilcrow">¶</a></p>
-<p id="section-3.4-4">This metadata parameter advertises support for the Token Endpoint
+with <span><a href="https://rfc-editor.org/rfc/rfc6749#section-3.2" class="relref">Section 3.2</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>).<a href="#section-3.5-3" class="pilcrow">¶</a></p>
+<p id="section-3.5-4">This metadata parameter advertises support for the Token Endpoint
 request parameter only. It does not advertise support for the
 <code>insufficient_claims</code> error code in error responses; recipients
-return that error code per their own policy regardless of metadata.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="authorization-server-behavior">
-<section id="section-3.5">
-        <h3 id="name-authorization-server-behavi">
-<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-authorization-server-behavi" class="section-name selfRef">Authorization Server Behavior</a>
-        </h3>
-<p id="section-3.5-1">An Authorization Server that supports the <code>requested_claims</code> request
-parameter on Token Exchange or Refresh Token requests <span class="bcp14">SHOULD</span> include
-each requested claim in the issued token, subject to its own policy.
-In particular, the Authorization Server:<a href="#section-3.5-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3.5-2.1">
-            <p id="section-3.5-2.1.1"><span class="bcp14">MUST NOT</span> release a claim it would not otherwise release under its
-configured policy for the subject, the audience, and the
-requesting Client. Receipt of <code>requested_claims</code> is not
-authorization to bypass consent, privacy, or release controls.<a href="#section-3.5-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.5-2.2">
-            <p id="section-3.5-2.2.1"><span class="bcp14">MUST NOT</span> treat <code>requested_claims</code> as a complete enumeration of the
-claims that should be issued. The Authorization Server <span class="bcp14">MAY</span> include
-additional claims it would normally include.<a href="#section-3.5-2.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.5-2.3">
-            <p id="section-3.5-2.3.1"><span class="bcp14">MAY</span> decline to include any specific requested claim. Declining to
-include a claim is not, by itself, a reason to fail the request.<a href="#section-3.5-2.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-3.5-2.4">
-            <p id="section-3.5-2.4.1"><span class="bcp14">SHOULD NOT</span> fail the request because of an unrecognized claim name
-in <code>requested_claims</code>.<a href="#section-3.5-2.4.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-3.5-3">Issuance of a token in response to a <code>requested_claims</code> request is
-not an assertion by the Authorization Server that all requested
-claims were honored. A Client wishing to verify that a specific
-claim is present in the re-issued token before retrying inspects the
-issued token using the mechanisms applicable to its format.<a href="#section-3.5-3" class="pilcrow">¶</a></p>
+return that error code per their own policy regardless of metadata.
+For Protected Resource-side advertising of required claims, see
+<a href="#prm" class="auto internal xref">Section 4.2</a>.<a href="#section-3.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="no-loop">
@@ -1914,16 +1989,17 @@ issued token using the mechanisms applicable to its format.<a href="#section-3.5
         <h3 id="name-no-loop-guarantee">
 <a href="#section-3.6" class="section-number selfRef">3.6. </a><a href="#name-no-loop-guarantee" class="section-name selfRef">No Loop Guarantee</a>
         </h3>
-<p id="section-3.6-1">This specification does not oblige the Issuing Authorization Server
-to satisfy a <code>requested_claims</code> request, nor the Processing
-Authorization Server to accept a re-issued credential whose claims
-still fall short. For the purposes of this section, the "logical
-Token Endpoint exchange" is the user-initiated workflow that
-produced the original <code>insufficient_claims</code> response. A Client
-<span class="bcp14">SHOULD</span> issue at most one retry per logical Token Endpoint exchange,
-and <span class="bcp14">MUST</span> treat any subsequent <code>insufficient_claims</code> response for the
-same logical exchange as a terminal failure, even if it enumerates a
-different <code>required_claims</code> value.<a href="#section-3.6-1" class="pilcrow">¶</a></p>
+<p id="section-3.6-1">This specification does not oblige an Issuing Authorization Server
+to satisfy a <code>requested_claims</code> request, nor a recipient (Processing
+Authorization Server or Protected Resource) to accept a re-issued
+credential whose claims still fall short. For the purposes of this
+section, the "logical exchange" is the user-initiated workflow that
+produced the original <code>insufficient_claims</code> response or challenge,
+whether returned from a Token Endpoint or a Protected Resource. A
+Client <span class="bcp14">SHOULD</span> issue at most one retry per logical exchange, and <span class="bcp14">MUST</span>
+treat any subsequent <code>insufficient_claims</code> for the same logical
+exchange as a terminal failure, even if it enumerates a different
+<code>required_claims</code> value.<a href="#section-3.6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1941,32 +2017,56 @@ code.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">The challenge follows <span><a href="https://rfc-editor.org/rfc/rfc6750#section-3" class="relref">Section 3</a> of [<a href="#RFC6750" class="cite xref">RFC6750</a>]</span>. The Protected
 Resource <span class="bcp14">MUST</span> respond with HTTP status 403 Forbidden and a
 <code>WWW-Authenticate</code> header field that includes the <code>error</code> parameter
-with the value <code>insufficient_claims</code>. The challenge <span class="bcp14">SHOULD</span> include a
-<code>required_claims</code> parameter enumerating the claims the Protected
-Resource requires; the parameter has the syntax defined in
-<a href="#response-param" class="auto internal xref">Section 3.2</a>.<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">The HTTP status code is 403 Forbidden, consistent with
-<code>insufficient_scope</code> (<span><a href="https://rfc-editor.org/rfc/rfc6750#section-3.1" class="relref">Section 3.1</a> of [<a href="#RFC6750" class="cite xref">RFC6750</a>]</span>): the Access Token
-authenticates the Client and subject but does not authorize this
-specific request because of insufficient claim content. The 401
-Unauthorized status code is not used because the issue is not
-authentication of the Client or the token.<a href="#section-4-3" class="pilcrow">¶</a></p>
-<p id="section-4-4">Example challenge (line breaks added for readability):<a href="#section-4-4" class="pilcrow">¶</a></p>
-<div class="lang-http sourcecode" id="section-4-5">
+with the value <code>insufficient_claims</code>. The Protected Resource <span class="bcp14">MAY</span>
+also include the <code>resource_metadata</code> auth-param (<span>[<a href="#RFC9728" class="cite xref">RFC9728</a>]</span>) to
+point the Client at its Protected Resource Metadata document; see
+<a href="#prm" class="auto internal xref">Section 4.2</a>.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">Structured details of the challenge, including the list of claims
+the Protected Resource requires, are conveyed in the JSON response
+body rather than as additional <code>WWW-Authenticate</code> auth-params. This
+keeps the Bearer challenge header simple and follows the same
+body-carrying pattern as the OAuth 2.0 Token Endpoint error response
+(<span><a href="https://rfc-editor.org/rfc/rfc6749#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>). When the Protected Resource emits a
+response body alongside the challenge, the body's Content-Type <span class="bcp14">MUST</span>
+be <code>application/json</code> and the body <span class="bcp14">SHOULD</span> include a <code>required_claims</code>
+member, with the syntax defined in <a href="#response-param" class="auto internal xref">Section 3.2</a>, enumerating
+the claims the Protected Resource requires. The response <span class="bcp14">SHOULD</span>
+include <code>Cache-Control: no-store</code>.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">The 403 status code is consistent with <code>insufficient_scope</code>
+(<span><a href="https://rfc-editor.org/rfc/rfc6750#section-3.1" class="relref">Section 3.1</a> of [<a href="#RFC6750" class="cite xref">RFC6750</a>]</span>): the Access Token authenticates the
+Client and subject but does not authorize this specific request
+because of insufficient claim content. The 401 Unauthorized status
+code is not used because the issue is not authentication of the
+Client or the token.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">Example challenge (line breaks in the <code>WWW-Authenticate</code> header are
+shown for readability):<a href="#section-4-5" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="section-4-6">
 <pre>
 HTTP/1.1 403 Forbidden
-WWW-Authenticate: Bearer realm="example",
-                  error="insufficient_claims",
-                  error_description="The presented Access Token is missing required claims.",
-                  required_claims="email department"
-</pre><a href="#section-4-5" class="pilcrow">¶</a>
+WWW-Authenticate: Bearer error="insufficient_claims",
+                  resource_metadata="https://api.example.com/.well-known/oauth-protected-resource"
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "error": "insufficient_claims",
+  "error_description": "The Access Token is missing required claims.",
+  "required_claims": ["email", "department"]
+}
+</pre><a href="#section-4-6" class="pilcrow">¶</a>
 </div>
-<p id="section-4-6">If the resource request was unauthenticated (no Access Token
+<p id="section-4-7">A Protected Resource that cannot emit a JSON response body alongside
+the challenge <span class="bcp14">MAY</span> convey only the <code>WWW-Authenticate</code> header. In that
+case the Client has no machine-readable list of required claims to
+echo on retry, and <span class="bcp14">SHOULD</span> treat the response as a terminal failure
+unless out-of-band information, such as Protected Resource Metadata
+(<a href="#prm" class="auto internal xref">Section 4.2</a>), is available.<a href="#section-4-7" class="pilcrow">¶</a></p>
+<p id="section-4-8">If the resource request was unauthenticated (no Access Token
 presented), the Protected Resource <span class="bcp14">MUST</span> use the existing error
 semantics of <span><a href="https://rfc-editor.org/rfc/rfc6750#section-3" class="relref">Section 3</a> of [<a href="#RFC6750" class="cite xref">RFC6750</a>]</span> (no <code>error</code> parameter or
 <code>error="invalid_token"</code>), not <code>insufficient_claims</code>. The error
 defined here is only applicable when the presented Access Token is
-otherwise acceptable.<a href="#section-4-6" class="pilcrow">¶</a></p>
+otherwise acceptable.<a href="#section-4-8" class="pilcrow">¶</a></p>
 <div id="client-behavior">
 <section id="section-4.1">
         <h3 id="name-client-behavior">
@@ -1974,10 +2074,11 @@ otherwise acceptable.<a href="#section-4-6" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-4.1-1">A Client that receives an <code>insufficient_claims</code> challenge from a
 Protected Resource, and that supports the mechanism defined in this
-document, obtains a new Access Token carrying the claims indicated by
-<code>required_claims</code> and retries the resource request with the new
-token. The mechanism by which the Client obtains the new Access
-Token depends on how the original Access Token was acquired:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+document, obtains a new Access Token carrying the claims listed in
+the <code>required_claims</code> field of the response body and retries the
+resource request with the new token. The mechanism by which the
+Client obtains the new Access Token depends on how the original
+Access Token was acquired:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-2.1">
             <p id="section-4.1-2.1.1">When the original Access Token was obtained via OAuth 2.0 Token
@@ -1997,17 +2098,18 @@ multi-resource Refresh Tokens.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a
 authorization flow (the <code>authorization_code</code> grant, the device
 authorization grant, the CIBA grant, or any other grant that may
 involve end-user interaction), the Client <span class="bcp14">SHOULD</span> initiate a new
-authorization request and convey its claim requirements using the
-OpenID Connect <code>claims</code> request parameter
-(Section 5.5 of <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>); see <a href="#rel-oidc-claims" class="auto internal xref">Section 6.5</a>. The
+authorization request and convey its claim requirements using an
+applicable front-channel claims request mechanism, such as the
+OpenID Connect <code>claims</code> request parameter (Section 5.5 of
+<span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>); see <a href="#rel-oidc-claims" class="auto internal xref">Section 6.5</a>. The
 <code>requested_claims</code> parameter defined in this document is not used
 in this case.<a href="#section-4.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.1-3">A Client <span class="bcp14">SHOULD</span> issue at most one retry per resource request in
-response to <code>insufficient_claims</code>, and <span class="bcp14">MUST</span> treat any subsequent
-<code>insufficient_claims</code> challenge for the same logical request as a
-terminal failure to avoid retry loops.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.1-3">A Client <span class="bcp14">SHOULD</span> treat the resource request as the "logical exchange"
+for the purposes of <a href="#no-loop" class="auto internal xref">Section 3.6</a>: at most one retry per resource
+request, with any subsequent <code>insufficient_claims</code> treated as a
+terminal failure.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="prm">
@@ -2052,7 +2154,8 @@ advertised list as a hint for Access Token acquisition and <span class="bcp14">S
 <code>requested_claims</code> in Token Endpoint requests, claim names in the
 metadata are interpreted in the context of the (issuer, subject,
 audience, Client) tuple of any Access Token that will be presented
-at the resource; see <a href="#rel-scope" class="auto internal xref">Section 6.3</a>.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
+at the resource; see <a href="#rel-scope" class="auto internal xref">Section 6.3</a>. For Authorization Server-side
+advertising of <code>requested_claims</code> support, see <a href="#as-metadata" class="auto internal xref">Section 3.5</a>.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2062,6 +2165,9 @@ at the resource; see <a href="#rel-scope" class="auto internal xref">Section 6.3
       <h2 id="name-end-to-end-examples">
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-end-to-end-examples" class="section-name selfRef">End-to-End Examples</a>
       </h2>
+<p id="section-5-1">The two diagrams below illustrate the principal flows. For a full
+worked example with concrete actors, decoded JWT payloads, and
+complete HTTP messages, see <a href="#worked-example" class="auto internal xref">Appendix A</a>.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <div id="token-exchange-retry">
 <section id="section-5.1">
         <h3 id="name-token-exchange-retry">
@@ -2081,27 +2187,27 @@ Client                IdP AS              RAS
    |  (subject=ID Token)|                  |
    |-------------------&gt;|                  |
    |                    |                  |
-   |  Token (minimal)   |                  |
+   |  ID-JAG (minimal)  |                  |
    |&lt;-------------------|                  |
    |                    |                  |
-   |  TokenExchange (subject=Token)        |
+   |  JWT Bearer (assertion=ID-JAG)        |
    |--------------------------------------&gt;|
    |                    |                  |
    |     400 insufficient_claims           |
-   |     required_claims="email            |
-   |                      given_name       |
-   |                      family_name"     |
+   |     required_claims: ["email",        |
+   |                       "given_name",   |
+   |                       "family_name"]  |
    |&lt;--------------------------------------|
    |                    |                  |
    |  TokenExchange     |                  |
    |  +requested_claims |                  |
    |-------------------&gt;|                  |
    |                    |                  |
-   |  Token with        |                  |
+   |  ID-JAG with       |                  |
    |  requested claims  |                  |
    |&lt;-------------------|                  |
    |                    |                  |
-   |  TokenExchange (subject=Token+)       |
+   |  JWT Bearer (assertion=ID-JAG)        |
    |--------------------------------------&gt;|
    |                    |                  |
    |              200 OK { access_token }  |
@@ -2128,15 +2234,17 @@ Client                  AS                Resource
    |                    |                    |
    |  403 Forbidden                          |
    |  WWW-Authenticate: Bearer               |
-   |    error="insufficient_claims",         |
-   |    required_claims="email department"   |
+   |    error="insufficient_claims"          |
+   |  Body: {"required_claims":              |
+   |         ["email", "department"]}        |
    |&lt;----------------------------------------|
    |                    |                    |
    |  TokenExchange     |                    |
+   |  audience=api.example.com               |
    |  +requested_claims |                    |
    |-------------------&gt;|                    |
    |                    |                    |
-   |  AT2 (carries     |                    |
+   |  AT2 (carries      |                    |
    |  email, department)|                    |
    |&lt;-------------------|                    |
    |                    |                    |
@@ -2165,10 +2273,13 @@ Client                  AS                Resource
 <p id="section-6.1-1"><span>[<a href="#I-D.ietf-oauth-identity-assertion-authz-grant" class="cite xref">I-D.ietf-oauth-identity-assertion-authz-grant</a>]</span> defines the
 <code>urn:ietf:params:oauth:token-type:id-jag</code> token type and the role of
 the Resource Authorization Server in a cross-domain identity
-assertion flow. With the mechanism defined here, specific claim
-requirements at the RAS become a deployment-time decision negotiated
-at runtime via <code>required_claims</code>, with the Issuing Authorization
-Server retaining policy authority over release.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+assertion flow. The Client mints an ID-JAG via OAuth 2.0 Token
+Exchange (<span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>) at the IdP AS and presents the ID-JAG to the
+RAS via the JWT Bearer assertion grant (<span>[<a href="#RFC7523" class="cite xref">RFC7523</a>]</span>). With the
+mechanism defined here, specific claim requirements at the RAS
+become a deployment-time decision negotiated at runtime via the
+<code>required_claims</code>/<code>requested_claims</code> pair, with the Issuing
+Authorization Server retaining policy authority over release.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="assertion-based-grants-rfc-7521-rfc-7522-rfc-7523">
@@ -2203,28 +2314,31 @@ Authorization Server-specific authorization request signal. In some
 deployment profiles, including OpenID Connect, specific scope values
 (for example, <code>profile</code>, <code>email</code>) imply the issuance of specific
 claims. This document does not redefine that mapping.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
-<p id="section-6.3-2"><code>required_claims</code> is finer-grained: a recipient names individual
-claims directly, independent of any scope-to-claim mapping the
-issuing Authorization Server may apply. The Client can forward a
-precise requirement without knowing that mapping.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
-<p id="section-6.3-3"><code>required_claims</code> shares with <code>scope</code> the property that values are
-interpreted in the context of the (issuer, subject, audience, Client)
-tuple of the request. A claim name has no globally registered
-semantics that override an Authorization Server's local release
-policy; the same name may carry different content, format, or
-release rules at different Authorization Servers, for different
-subjects, audiences, or Clients. A Client forwarding claim names
-between a recipient (in <code>required_claims</code>) and an Issuing Authorization
-Server (in <code>requested_claims</code>) is relying on those two parties having
-a shared understanding of the listed names,
-typically through registered claims or profile alignment.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
-<p id="section-6.3-4"><code>required_claims</code> complements <code>scope</code> rather than replacing it. A
-Client retrying at the Token Endpoint <span class="bcp14">MAY</span> include both parameters;
-the Authorization Server applies its scope semantics as it otherwise
-would, and additionally takes <code>required_claims</code> into account.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">The mechanism defined here is finer-grained than <code>scope</code>: a
+recipient names individual claims directly in <code>required_claims</code>,
+independent of any scope-to-claim mapping the issuing Authorization
+Server may apply. The Client can forward a precise requirement as
+<code>requested_claims</code> without knowing that mapping.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">Both <code>required_claims</code> and <code>requested_claims</code> share with <code>scope</code>
+the property that values are interpreted in the context of the
+(issuer, subject, audience, Client) tuple of the request. A claim
+name has no globally registered semantics that override an
+Authorization Server's local release policy; the same name may
+carry different content, format, or release rules at different
+Authorization Servers, for different subjects, audiences, or
+Clients. A Client forwarding claim names between a recipient (in
+<code>required_claims</code>) and an Issuing Authorization Server (in
+<code>requested_claims</code>) is relying on those two parties having a shared
+understanding of the listed names, typically through registered
+claims or profile alignment.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<p id="section-6.3-4"><code>requested_claims</code> complements <code>scope</code> rather than replacing it. A
+Client retrying at the Token Endpoint <span class="bcp14">MAY</span> include both parameters in
+the same request; the Authorization Server applies its scope
+semantics as it otherwise would, and additionally takes
+<code>requested_claims</code> into account.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="oauth-20-resource-indicators-rfc-8707">
+<div id="rel-resource-indicators">
 <section id="section-6.4">
         <h3 id="name-oauth-20-resource-indicator">
 <a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-oauth-20-resource-indicator" class="section-name selfRef">OAuth 2.0 Resource Indicators (RFC 8707)</a>
@@ -2268,10 +2382,10 @@ Endpoint and Token Endpoint. The value is a JSON object that
 requests individual claims for the ID Token and UserInfo responses,
 with optional essential/voluntary semantics and value constraints.<a href="#section-6.5-1" class="pilcrow">¶</a></p>
 <p id="section-6.5-2">This document defers to the OIDC <code>claims</code> parameter for any response
-to <code>insufficient_claims</code> that requires a new authorization request,
-including the <code>authorization_code</code> grant, the device authorization
-grant, the CIBA grant, and similar interactive flows. In these
-cases:<a href="#section-6.5-2" class="pilcrow">¶</a></p>
+to <code>insufficient_claims</code> that requires a new OIDC authorization
+request, including the <code>authorization_code</code> grant, the device
+authorization grant, the CIBA grant, and similar interactive flows.
+In these cases:<a href="#section-6.5-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.5-3.1">
             <p id="section-6.5-3.1.1">The Client <span class="bcp14">SHOULD</span> initiate a new authorization request to the
@@ -2313,8 +2427,8 @@ in the issued token.<a href="#section-6.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.5-6">An Authorization Server <span class="bcp14">MAY</span> support both <code>claims</code> (on its OIDC
-endpoints) and <code>requested_claims</code> (on its Token Endpoint Token
-Exchange and Refresh Token requests); this document does not define
+endpoints) and <code>requested_claims</code> (on Token Exchange and Refresh
+Token requests at its Token Endpoint); this document does not define
 an interaction between them.<a href="#section-6.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2358,13 +2472,13 @@ references <span class="bcp14">SHOULD</span> define their own parameter rather t
         <h3 id="name-disclosure-of-claim-require">
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-disclosure-of-claim-require" class="section-name selfRef">Disclosure of Claim Requirements</a>
         </h3>
-<p id="section-7.1-1">The <code>required_claims</code> parameter in an error response or
-authentication challenge discloses to the Client the set of claims
-the recipient intends to consume. This is generally low-sensitivity
-information, comparable to the OAuth <code>scope</code> parameter, but
-operators <span class="bcp14">SHOULD</span> confirm that disclosing the list to any Client
-capable of reaching the Token Endpoint or Protected Resource is
-acceptable.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.1-1">The <code>required_claims</code> parameter, whether in an error response body
+or in Protected Resource Metadata, discloses to the Client the set
+of claims the recipient intends to consume. This is generally
+low-sensitivity information, comparable to the OAuth <code>scope</code>
+parameter, but operators <span class="bcp14">SHOULD</span> confirm that disclosing the list to
+any Client capable of reaching the Token Endpoint or Protected
+Resource is acceptable.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="disclosure-of-issued-claims">
@@ -2377,18 +2491,19 @@ re-issued token in response to <code>requested_claims</code>, those claims may
 be readable by the Client (for example, a JWT-formatted token can
 be parsed by anyone holding the token). Authorization Servers <span class="bcp14">SHOULD</span>
 apply the same release policy as for any other token issued to the
-same subject, audience, and Client. Where the intended consumer is
-the recipient only and the Client is treated as a transport,
+same subject, audience, and Client.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-2">In deployments where the intended consumer of the issued token is
+the recipient only and the Client is treated as a transport, the
 security guidance from <span>[<a href="#I-D.ietf-oauth-identity-assertion-authz-grant" class="cite xref">I-D.ietf-oauth-identity-assertion-authz-grant</a>]</span>
 on audience scoping and (where supported) encryption of the token
-applies.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.2-2">The Authorization Server is the policy authority for release.
+applies.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.2-3">The Authorization Server is the policy authority for release.
 Receipt of a <code>requested_claims</code> parameter from a Client <span class="bcp14">MUST NOT</span> be
 treated as user consent, subject release authorization, or any other
 form of override of the Authorization Server's configured policy. An
 Authorization Server that finds that satisfying <code>requested_claims</code>
 would violate policy <span class="bcp14">MUST</span> decline the affected claims and <span class="bcp14">MAY</span>
-decline the request.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+decline the request.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="untrusted-input">
@@ -2399,10 +2514,10 @@ decline the request.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
 <p id="section-7.3-1">A recipient constructing a <code>required_claims</code> field, and an
 Authorization Server consuming a <code>requested_claims</code> parameter, <span class="bcp14">MUST</span>
 treat the value as untrusted input until validated. Implementations
-<span class="bcp14">MUST</span> validate that each token in the list conforms to the syntax
-constraints stated in this document and <span class="bcp14">MUST NOT</span> pass the value into
-log formatters, database queries, or claim release rules without
-proper escaping or parameterization.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<span class="bcp14">MUST</span> validate that each claim name in the array conforms to the
+syntax constraints stated in this document and <span class="bcp14">MUST NOT</span> pass the
+value into log formatters, database queries, or claim release rules
+without proper escaping or parameterization.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="replay-and-caching">
@@ -2410,12 +2525,11 @@ proper escaping or parameterization.<a href="#section-7.3-1" class="pilcrow">¶<
         <h3 id="name-replay-and-caching">
 <a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-replay-and-caching" class="section-name selfRef">Replay and Caching</a>
         </h3>
-<p id="section-7.4-1">The error response, the authentication challenge, and the
-<code>required_claims</code> parameter carry no authentication state, no
-nonce, and no expiration, and <span class="bcp14">MUST NOT</span> be used to make any access
-decision. They serve only to guide the Client's next request. Token
-Endpoint responses carrying <code>required_claims</code> <span class="bcp14">SHOULD</span> be returned
-with <code>Cache-Control: no-store</code>.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.4-1">The <code>insufficient_claims</code> error response (at the Token Endpoint or
+Protected Resource) and the <code>required_claims</code> parameter it carries
+have no authentication state, no nonce, and no expiration, and <span class="bcp14">MUST NOT</span> be used to make any access decision. They serve only to guide
+the Client's next request. Responses carrying <code>required_claims</code>
+          <span class="bcp14">SHOULD</span> be returned with <code>Cache-Control: no-store</code>.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="denial-of-service">
@@ -2491,7 +2605,7 @@ Error" registry established by <span><a href="https://rfc-editor.org/rfc/rfc6749
           <dd class="break"></dd>
 <dt id="section-9.1-2.3">Usage Location:</dt>
           <dd style="margin-left: 1.5em" id="section-9.1-2.4">
-            <p id="section-9.1-2.4.1">Token Error Response, Resource Access Error Response<a href="#section-9.1-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-9.1-2.4.1">Token Endpoint Error Response, Resource Access Error Response<a href="#section-9.1-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.1-2.5">Protocol Extension:</dt>
@@ -2541,7 +2655,7 @@ Parameters" registry established by <span><a href="https://rfc-editor.org/rfc/rf
             <dd class="break"></dd>
 <dt id="section-9.2.1-1.3">Parameter Usage Location:</dt>
             <dd style="margin-left: 1.5em" id="section-9.2.1-1.4">
-              <p id="section-9.2.1-1.4.1">token response, resource access authentication challenge<a href="#section-9.2.1-1.4.1" class="pilcrow">¶</a></p>
+              <p id="section-9.2.1-1.4.1">token response<a href="#section-9.2.1-1.4.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-9.2.1-1.5">Change Controller:</dt>
@@ -2552,6 +2666,14 @@ Parameters" registry established by <span><a href="https://rfc-editor.org/rfc/rf
 <dt id="section-9.2.1-1.7">Specification Document(s):</dt>
             <dd style="margin-left: 1.5em" id="section-9.2.1-1.8">
               <p id="section-9.2.1-1.8.1">This document<a href="#section-9.2.1-1.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-9.2.1-1.9">Notes:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.2.1-1.10">
+              <p id="section-9.2.1-1.10.1">The <code>required_claims</code> parameter appears in the JSON error response
+body of OAuth 2.0 Token Endpoint error responses
+(<span><a href="https://rfc-editor.org/rfc/rfc6749#section-5.2" class="relref">Section 5.2</a> of [<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>) and in the JSON error response body
+of Protected Resources returning <code>insufficient_claims</code> (<a href="#resource" class="auto internal xref">Section 4</a>).<a href="#section-9.2.1-1.10.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 </dl>
@@ -2639,7 +2761,7 @@ Authorization Server Metadata" registry established by
           <dd style="margin-left: 1.5em" id="section-9.4-2.4">
             <p id="section-9.4-2.4.1">Boolean value indicating whether the Authorization Server supports
 the <code>requested_claims</code> Token Endpoint request parameter defined in
-this document; see <a href="#as-metadata" class="auto internal xref">Section 3.4</a>.<a href="#section-9.4-2.4.1" class="pilcrow">¶</a></p>
+this document; see <a href="#as-metadata" class="auto internal xref">Section 3.5</a>.<a href="#section-9.4-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-9.4-2.5">Change Controller:</dt>
@@ -2680,6 +2802,10 @@ this document; see <a href="#as-metadata" class="auto internal xref">Section 3.4
         <dd>
 <span class="refAuthor">Jones, M.</span> and <span class="refAuthor">D. Hardt</span>, <span class="refTitle">"The OAuth 2.0 Authorization Framework: Bearer Token Usage"</span>, <span class="seriesInfo">RFC 6750</span>, <span class="seriesInfo">DOI 10.17487/RFC6750</span>, <time datetime="2012-10" class="refDate">October 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6750">https://www.rfc-editor.org/rfc/rfc6750</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC7519">[RFC7519]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Token (JWT)"</span>, <span class="seriesInfo">RFC 7519</span>, <span class="seriesInfo">DOI 10.17487/RFC7519</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7519">https://www.rfc-editor.org/rfc/rfc7519</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC7521">[RFC7521]</dt>
         <dd>
 <span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Mortimore, C.</span>, <span class="refAuthor">Jones, M.</span>, and <span class="refAuthor">Y. Goland</span>, <span class="refTitle">"Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants"</span>, <span class="seriesInfo">RFC 7521</span>, <span class="seriesInfo">DOI 10.17487/RFC7521</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7521">https://www.rfc-editor.org/rfc/rfc7521</a>&gt;</span>. </dd>
@@ -2699,6 +2825,10 @@ this document; see <a href="#as-metadata" class="auto internal xref">Section 3.4
 <dt id="RFC8693">[RFC8693]</dt>
         <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Nadalin, A.</span>, <span class="refAuthor">Campbell, B., Ed.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">C. Mortimore</span>, <span class="refTitle">"OAuth 2.0 Token Exchange"</span>, <span class="seriesInfo">RFC 8693</span>, <span class="seriesInfo">DOI 10.17487/RFC8693</span>, <time datetime="2020-01" class="refDate">January 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8693">https://www.rfc-editor.org/rfc/rfc8693</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8707">[RFC8707]</dt>
+        <dd>
+<span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Resource Indicators for OAuth 2.0"</span>, <span class="seriesInfo">RFC 8707</span>, <span class="seriesInfo">DOI 10.17487/RFC8707</span>, <time datetime="2020-02" class="refDate">February 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8707">https://www.rfc-editor.org/rfc/rfc8707</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9728">[RFC9728]</dt>
       <dd>
@@ -2721,10 +2851,6 @@ this document; see <a href="#as-metadata" class="auto internal xref">Section 3.4
         <dd>
 <span class="refAuthor">Sakimura, N.</span>, <span class="refAuthor">Bradley, J.</span>, <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">de Medeiros, B.</span>, and <span class="refAuthor">C. Mortimore</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 2"</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-core-1_0.html">https://openid.net/specs/openid-connect-core-1_0.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC7519">[RFC7519]</dt>
-        <dd>
-<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Token (JWT)"</span>, <span class="seriesInfo">RFC 7519</span>, <span class="seriesInfo">DOI 10.17487/RFC7519</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7519">https://www.rfc-editor.org/rfc/rfc7519</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC7522">[RFC7522]</dt>
         <dd>
 <span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Mortimore, C.</span>, and <span class="refAuthor">M. Jones</span>, <span class="refTitle">"Security Assertion Markup Language (SAML) 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants"</span>, <span class="seriesInfo">RFC 7522</span>, <span class="seriesInfo">DOI 10.17487/RFC7522</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7522">https://www.rfc-editor.org/rfc/rfc7522</a>&gt;</span>. </dd>
@@ -2732,10 +2858,6 @@ this document; see <a href="#as-metadata" class="auto internal xref">Section 3.4
 <dt id="RFC7523">[RFC7523]</dt>
         <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Campbell, B.</span>, and <span class="refAuthor">C. Mortimore</span>, <span class="refTitle">"JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants"</span>, <span class="seriesInfo">RFC 7523</span>, <span class="seriesInfo">DOI 10.17487/RFC7523</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7523">https://www.rfc-editor.org/rfc/rfc7523</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC8707">[RFC8707]</dt>
-        <dd>
-<span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Resource Indicators for OAuth 2.0"</span>, <span class="seriesInfo">RFC 8707</span>, <span class="seriesInfo">DOI 10.17487/RFC8707</span>, <time datetime="2020-02" class="refDate">February 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8707">https://www.rfc-editor.org/rfc/rfc8707</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9396">[RFC9396]</dt>
         <dd>
@@ -2750,19 +2872,354 @@ this document; see <a href="#as-metadata" class="auto internal xref">Section 3.4
 </div>
 </section>
 </div>
-<div id="acknowledgments">
+<div id="worked-example">
 <section id="appendix-A">
+      <h2 id="name-worked-end-to-end-example">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-worked-end-to-end-example" class="section-name selfRef">Worked End-to-End Example</a>
+      </h2>
+<p id="appendix-A-1">This appendix is non-normative. It walks through a complete
+just-in-time (JIT) provisioning flow using the Identity Assertion
+Authorization Grant (<span>[<a href="#I-D.ietf-oauth-identity-assertion-authz-grant" class="cite xref">I-D.ietf-oauth-identity-assertion-authz-grant</a>]</span>)
+profile, the Token Exchange retry path of <a href="#request-param" class="auto internal xref">Section 3.3</a>, and the
+Protected Resource Metadata advertisement of <a href="#prm" class="auto internal xref">Section 4.2</a>. HTTP messages
+are shown in full; JWT contents are shown as decoded payloads for
+readability.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="actors">
+<section id="appendix-A.1">
+        <h3 id="name-actors">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-actors" class="section-name selfRef">Actors</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="appendix-A.1-1.1">
+            <p id="appendix-A.1-1.1.1"><strong>End user:</strong> Alice, an employee of Example Corp.<a href="#appendix-A.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-1.2">
+            <p id="appendix-A.1-1.2.1"><strong>Client:</strong> Acme Tools (<code>client_id=acme-tools</code>), an enterprise SaaS
+application that uses Alice's IdP session to access a downstream
+API on her behalf.<a href="#appendix-A.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-1.3">
+            <p id="appendix-A.1-1.3.1"><strong>Identity Provider Authorization Server (IdP AS):</strong>
+              <code>https://idp.example.com/</code>. This is the Issuing Authorization
+Server in the terminology of <a href="#request-param" class="auto internal xref">Section 3.3</a>.<a href="#appendix-A.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-1.4">
+            <p id="appendix-A.1-1.4.1"><strong>Resource Authorization Server (RAS):</strong>
+              <code>https://ras.example.com/</code>. This is the Processing Authorization
+Server.<a href="#appendix-A.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-1.5">
+            <p id="appendix-A.1-1.5.1"><strong>Downstream resource:</strong> <code>https://api.example.com/</code>.<a href="#appendix-A.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-A.1-2">The RAS performs JIT account provisioning when the subject is
+unknown to it. Its policy requires <code>email</code>, <code>given_name</code>, and
+<code>family_name</code> to provision a new account.<a href="#appendix-A.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="step-1-client-obtains-an-id-jag-from-the-idp-as">
+<section id="appendix-A.2">
+        <h3 id="name-step-1-client-obtains-an-id">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-step-1-client-obtains-an-id" class="section-name selfRef">Step 1: Client obtains an ID-JAG from the IdP AS</a>
+        </h3>
+<p id="appendix-A.2-1">The Client has authenticated Alice via OpenID Connect at the IdP and
+holds her ID Token. The Client sends a Token Exchange request to the
+IdP AS for an ID-JAG bound to the RAS's audience. In this first
+attempt, the Client does not yet know which claims the RAS requires
+and sends no <code>requested_claims</code>.<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.2-2">
+<pre>
+POST /oauth2/token HTTP/1.1
+Host: idp.example.com
+Authorization: Basic YWNtZS10b29sczpzM2NyZXQ=
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+&amp;requested_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid-jag
+&amp;subject_token=eyJhbGciOiJSUzI1NiIs...
+&amp;subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token
+&amp;audience=https%3A%2F%2Fras.example.com%2F
+</pre><a href="#appendix-A.2-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-3">The IdP AS validates the ID Token, applies its default release
+policy for this Client and audience, and issues an ID-JAG with
+minimal content. Decoded payload:<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="appendix-A.2-4">
+<pre>
+{
+  "iss": "https://idp.example.com/",
+  "sub": "alice-uuid-12345",
+  "aud": "https://ras.example.com/",
+  "client_id": "acme-tools",
+  "exp": 1748190000,
+  "iat": 1748189700
+}
+</pre><a href="#appendix-A.2-4" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-5">The Token Exchange response:<a href="#appendix-A.2-5" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.2-6">
+<pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "issued_token_type": "urn:ietf:params:oauth:token-type:id-jag",
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
+  "token_type": "N_A",
+  "expires_in": 300
+}
+</pre><a href="#appendix-A.2-6" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-7">The <code>access_token</code> field carries the ID-JAG by convention of
+<span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>.<a href="#appendix-A.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="step-2-client-presents-the-id-jag-to-the-ras">
+<section id="appendix-A.3">
+        <h3 id="name-step-2-client-presents-the-">
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-step-2-client-presents-the-" class="section-name selfRef">Step 2: Client presents the ID-JAG to the RAS</a>
+        </h3>
+<p id="appendix-A.3-1">The Client presents the ID-JAG to the RAS using the JWT Bearer
+assertion grant (<span>[<a href="#RFC7523" class="cite xref">RFC7523</a>]</span>). The ID-JAG carries the audience
+identifier of the RAS in its <code>aud</code> claim, so no separate <code>audience</code>
+form parameter is needed.<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.3-2">
+<pre>
+POST /oauth2/token HTTP/1.1
+Host: ras.example.com
+Authorization: Basic YWNtZS10b29sczpzM2NyZXQ=
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer
+&amp;assertion=eyJhbGciOiJSUzI1NiIs...
+</pre><a href="#appendix-A.3-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="step-3-ras-returns-insufficientclaims">
+<section id="appendix-A.4">
+        <h3 id="name-step-3-ras-returns-insuffic">
+<a href="#appendix-A.4" class="section-number selfRef">A.4. </a><a href="#name-step-3-ras-returns-insuffic" class="section-name selfRef">Step 3: RAS returns <code>insufficient_claims</code></a>
+        </h3>
+<p id="appendix-A.4-1">The RAS validates the ID-JAG (signature, issuer, audience, freshness)
+and accepts it. It then attempts to resolve <code>sub=alice-uuid-12345</code>
+to a local account; no match. To JIT-provision Alice, it needs
+<code>email</code>, <code>given_name</code>, and <code>family_name</code>. The ID-JAG carries none of
+these, so the RAS challenges the Client:<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.4-2">
+<pre>
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "error": "insufficient_claims",
+  "error_description":
+    "Cannot provision user; missing required claims.",
+  "required_claims": ["email", "given_name", "family_name"]
+}
+</pre><a href="#appendix-A.4-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="step-4-client-retries-the-token-exchange-with-requestedclaims">
+<section id="appendix-A.5">
+        <h3 id="name-step-4-client-retries-the-t">
+<a href="#appendix-A.5" class="section-number selfRef">A.5. </a><a href="#name-step-4-client-retries-the-t" class="section-name selfRef">Step 4: Client retries the Token Exchange with <code>requested_claims</code></a>
+        </h3>
+<p id="appendix-A.5-1">The Client extracts the <code>required_claims</code> JSON array from the
+response body, percent-encodes the array as the <code>requested_claims</code>
+form value, and sends a new Token Exchange request to the IdP AS
+with the same <code>audience</code> and the original ID Token as the subject
+token:<a href="#appendix-A.5-1" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.5-2">
+<pre>
+POST /oauth2/token HTTP/1.1
+Host: idp.example.com
+Authorization: Basic YWNtZS10b29sczpzM2NyZXQ=
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+&amp;requested_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid-jag
+&amp;subject_token=eyJhbGciOiJSUzI1NiIs...
+&amp;subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid_token
+&amp;audience=https%3A%2F%2Fras.example.com%2F
+&amp;requested_claims=%5B%22email%22%2C%22given_name%22%2C%22family_name%22%5D
+</pre><a href="#appendix-A.5-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.5-3">The <code>requested_claims</code> value above is the URL-encoded form of the
+JSON array <code>["email","given_name","family_name"]</code> returned in the
+RAS's <code>required_claims</code> field, forwarded verbatim.<a href="#appendix-A.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="step-5-idp-as-issues-an-enriched-id-jag">
+<section id="appendix-A.6">
+        <h3 id="name-step-5-idp-as-issues-an-enr">
+<a href="#appendix-A.6" class="section-number selfRef">A.6. </a><a href="#name-step-5-idp-as-issues-an-enr" class="section-name selfRef">Step 5: IdP AS issues an enriched ID-JAG</a>
+        </h3>
+<p id="appendix-A.6-1">The IdP AS checks that Alice has consented to share these claims
+with Acme Tools (or that the deployment's policy otherwise permits
+release). It then issues an ID-JAG that includes the requested
+claims. Decoded payload:<a href="#appendix-A.6-1" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="appendix-A.6-2">
+<pre>
+{
+  "iss": "https://idp.example.com/",
+  "sub": "alice-uuid-12345",
+  "aud": "https://ras.example.com/",
+  "client_id": "acme-tools",
+  "exp": 1748190600,
+  "iat": 1748190300,
+  "email": "alice@example.com",
+  "given_name": "Alice",
+  "family_name": "Carter"
+}
+</pre><a href="#appendix-A.6-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="step-6-client-re-presents-the-enriched-id-jag-to-the-ras">
+<section id="appendix-A.7">
+        <h3 id="name-step-6-client-re-presents-t">
+<a href="#appendix-A.7" class="section-number selfRef">A.7. </a><a href="#name-step-6-client-re-presents-t" class="section-name selfRef">Step 6: Client re-presents the enriched ID-JAG to the RAS</a>
+        </h3>
+<p id="appendix-A.7-1">The Client repeats the JWT Bearer request from Step 2, this time
+using the enriched ID-JAG returned in Step 5.<a href="#appendix-A.7-1" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.7-2">
+<pre>
+POST /oauth2/token HTTP/1.1
+Host: ras.example.com
+Authorization: Basic YWNtZS10b29sczpzM2NyZXQ=
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer
+&amp;assertion=eyJhbGciOiJSUzI1NiIs...
+</pre><a href="#appendix-A.7-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="step-7-ras-provisions-alices-account-and-issues-an-access-token">
+<section id="appendix-A.8">
+        <h3 id="name-step-7-ras-provisions-alice">
+<a href="#appendix-A.8" class="section-number selfRef">A.8. </a><a href="#name-step-7-ras-provisions-alice" class="section-name selfRef">Step 7: RAS provisions Alice's account and issues an Access Token</a>
+        </h3>
+<p id="appendix-A.8-1">The RAS:<a href="#appendix-A.8-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="appendix-A.8-2">
+<li id="appendix-A.8-2.1">
+            <p id="appendix-A.8-2.1.1">Validates the enriched ID-JAG.<a href="#appendix-A.8-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="appendix-A.8-2.2">
+            <p id="appendix-A.8-2.2.1">Confirms no existing account for <code>sub=alice-uuid-12345</code>.<a href="#appendix-A.8-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="appendix-A.8-2.3">
+            <p id="appendix-A.8-2.3.1">Creates a local account using <code>email</code>, <code>given_name</code>, and
+<code>family_name</code>.<a href="#appendix-A.8-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="appendix-A.8-2.4">
+            <p id="appendix-A.8-2.4.1">Issues an Access Token for the downstream API.<a href="#appendix-A.8-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<div class="lang-http sourcecode" id="appendix-A.8-3">
+<pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+</pre><a href="#appendix-A.8-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="step-8-client-calls-the-downstream-api">
+<section id="appendix-A.9">
+        <h3 id="name-step-8-client-calls-the-dow">
+<a href="#appendix-A.9" class="section-number selfRef">A.9. </a><a href="#name-step-8-client-calls-the-dow" class="section-name selfRef">Step 8: Client calls the downstream API</a>
+        </h3>
+<div class="lang-http sourcecode" id="appendix-A.9-1">
+<pre>
+GET /v1/projects HTTP/1.1
+Host: api.example.com
+Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
+</pre><a href="#appendix-A.9-1" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.9-2">The downstream API validates the Access Token, finds Alice's now-
+provisioned account, and returns her project list.<a href="#appendix-A.9-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="avoiding-the-round-trip-with-protected-resource-metadata">
+<section id="appendix-A.10">
+        <h3 id="name-avoiding-the-round-trip-wit">
+<a href="#appendix-A.10" class="section-number selfRef">A.10. </a><a href="#name-avoiding-the-round-trip-wit" class="section-name selfRef">Avoiding the Round Trip with Protected Resource Metadata</a>
+        </h3>
+<p id="appendix-A.10-1">If the RAS publishes its claim requirements via Protected Resource
+Metadata (<a href="#prm" class="auto internal xref">Section 4.2</a>), the Client can include <code>requested_claims</code> on its
+very first Token Exchange request and skip Steps 3 and 4 entirely.<a href="#appendix-A.10-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.10-2">Example PRM document at
+<code>https://ras.example.com/.well-known/oauth-protected-resource</code>:<a href="#appendix-A.10-2" class="pilcrow">¶</a></p>
+<div class="lang-http sourcecode" id="appendix-A.10-3">
+<pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "resource": "https://ras.example.com/",
+  "authorization_servers": ["https://idp.example.com/"],
+  "required_claims": ["email", "given_name", "family_name"]
+}
+</pre><a href="#appendix-A.10-3" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.10-4">A Client that fetches this metadata at startup includes
+<code>requested_claims=%5B%22email%22%2C%22given_name%22%2C%22family_name%22%5D</code>
+(the URL-encoded form of <code>["email","given_name","family_name"]</code>)
+in Step 1, and the IdP AS issues the enriched ID-JAG on the first
+attempt. The remainder of the flow proceeds directly to Step 7.<a href="#appendix-A.10-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authorization-server-metadata-discovery">
+<section id="appendix-A.11">
+        <h3 id="name-authorization-server-metadat">
+<a href="#appendix-A.11" class="section-number selfRef">A.11. </a><a href="#name-authorization-server-metadat" class="section-name selfRef">Authorization Server Metadata Discovery</a>
+        </h3>
+<p id="appendix-A.11-1">A Client that consults the IdP AS's metadata can also confirm support
+for the <code>requested_claims</code> parameter before sending it, avoiding
+wasted requests against an Authorization Server that does not
+recognize the parameter. Example IdP AS metadata fragment at
+<code>https://idp.example.com/.well-known/oauth-authorization-server</code>:<a href="#appendix-A.11-1" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="appendix-A.11-2">
+<pre>
+{
+  "issuer": "https://idp.example.com/",
+  "token_endpoint": "https://idp.example.com/oauth2/token",
+  "grant_types_supported": [
+    "authorization_code",
+    "refresh_token",
+    "urn:ietf:params:oauth:grant-type:token-exchange"
+  ],
+  "requested_claims_parameter_supported": true
+}
+</pre><a href="#appendix-A.11-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-B">
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">The author thanks the OAuth working group participants who raised
+<p id="appendix-B-1">The author thanks the OAuth working group participants who raised
 the underlying interoperability gap in the Identity Assertion
-Authorization Grant draft, in particular Aaron Parecki, Max Stytch,
-and Meghna Dubey.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+Authorization Grant draft.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-C">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
