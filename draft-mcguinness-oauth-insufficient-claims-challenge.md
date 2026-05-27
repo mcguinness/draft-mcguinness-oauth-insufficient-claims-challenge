@@ -323,9 +323,8 @@ following members:
 * `values`: OPTIONAL. A JSON array of values, one of which the
   claim MUST equal.
 
-The `value` and `values` members are mutually exclusive; an entry
-MUST NOT include both. An entry that includes neither is equivalent
-to the bare-string form. For example:
+An entry MUST NOT include both `value` and `values`. An entry that
+includes neither is equivalent to the bare-string form. For example:
 
 ~~~ json
 "required_claims": [
@@ -356,13 +355,13 @@ Metadata documents ({{prm}}). This aligns with the
 {{RFC8414}} and {{OpenID.Core}}.
 
 When the same list is carried as the `requested_claims` parameter
-(the back-channel retry parameter used by the Client; see
-{{request-param}}) on an `application/x-www-form-urlencoded` Token
-Endpoint request, the JSON array value is serialized to a JSON string
-and percent-encoded per `application/x-www-form-urlencoded` rules.
-This follows the precedent of `authorization_details` ({{RFC9396}}).
-Characters that have special meaning in JSON or in form bodies,
-including `[`, `]`, `"`, and `,`, MUST be percent-encoded.
+on an `application/x-www-form-urlencoded` Token Endpoint request
+(see {{request-param}}), the JSON array value is serialized to a
+JSON string and percent-encoded per `application/x-www-form-urlencoded`
+rules. This follows the precedent of `authorization_details`
+({{RFC9396}}). Characters that have special meaning in JSON or in
+form bodies, including `[`, `]`, `"`, and `,`, MUST be
+percent-encoded.
 
 The `required_claims` parameter is OPTIONAL. A recipient that cannot
 or does not wish to enumerate the missing claims MAY return the
