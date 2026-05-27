@@ -66,7 +66,7 @@ informative:
 This specification defines an OAuth 2.0 challenge mechanism by which
 an Authorization Server or Protected Resource signals that a
 credential presented by a Client is otherwise acceptable but does not
-carry the claims the recipient requires to fulfil the request. A new
+carry the claims the recipient requires to fulfill the request. A new
 error code, `insufficient_claims`, together with a `required_claims`
 parameter that enumerates the missing claims, lets the recipient
 indicate which claims are needed. The same challenge is used in
@@ -112,7 +112,7 @@ It defines:
 
 1. An OAuth 2.0 error code, `insufficient_claims`, that a recipient
    returns when a presented credential is otherwise acceptable but
-   lacks claims required to fulfil the request. Used in Token
+   lacks claims required to fulfill the request. Used in Token
    Endpoint error responses ({{Section 5.2 of RFC6749}}) and Bearer
    authentication challenges at Protected Resources
    ({{Section 3 of RFC6750}}).
@@ -295,7 +295,7 @@ The error code is:
 
 `insufficient_claims`:
 : The credential presented by the Client is acceptable but does not
-  carry claims sufficient for the recipient to fulfil the request.
+  carry claims sufficient for the recipient to fulfill the request.
 
 ## Response Parameter {#response-param}
 
@@ -411,7 +411,7 @@ reasons, the server MUST respond with the applicable error from
 the error defined here.
 
 If the credential is acceptable but does not carry claims sufficient
-to fulfil the request, the Processing Authorization Server MAY
+to fulfill the request, the Processing Authorization Server MAY
 respond with `insufficient_claims`. The error code is returned in
 the `error` parameter of the Token Endpoint error response,
 formatted per {{Section 5.2 of RFC6749}} with HTTP status code 400.
@@ -434,7 +434,7 @@ Cache-Control: no-store
 
 When a Protected Resource receives a request bearing an Access Token
 that is otherwise valid but does not carry claims sufficient to
-fulfil the request, the Protected Resource MAY return an
+fulfill the request, the Protected Resource MAY return an
 authentication challenge containing the `insufficient_claims` error
 code.
 
@@ -1199,7 +1199,7 @@ Specification Document(s):
 
 Description:
 : Indicates that the credential presented by the Client is acceptable
-  but does not carry claims sufficient for the recipient to fulfil
+  but does not carry claims sufficient for the recipient to fulfill
   the request. Returned in OAuth 2.0 Token Endpoint error responses
   and in OAuth 2.0 Bearer authentication challenges at Protected
   Resources.
