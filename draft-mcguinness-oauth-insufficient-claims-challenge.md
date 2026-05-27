@@ -34,6 +34,7 @@ normative:
   RFC2119:
   RFC6749:
   RFC6750:
+  RFC7519:
   RFC7521:
   RFC8174:
   RFC8259:
@@ -43,7 +44,6 @@ normative:
   RFC9728:
 
 informative:
-  RFC7519:
   RFC7522:
   RFC7523:
   RFC9396:
@@ -77,8 +77,9 @@ the Client responds: for back-channel re-issuance grants (OAuth 2.0
 Token Exchange and Refresh Token), a Client uses the `requested_claims`
 Token Endpoint request parameter defined here; for grants that may
 require end-user interaction (authorization_code, device_code, CIBA),
-a Client uses the OpenID Connect `claims` request parameter. A
-motivating use case is just-in-time account provisioning by a
+a Client uses an applicable front-channel claims request mechanism,
+such as the OpenID Connect `claims` request parameter when available.
+A motivating use case is just-in-time account provisioning by a
 Resource Authorization Server receiving an identity assertion under
 the Identity Assertion Authorization Grant.
 
@@ -154,8 +155,9 @@ response, however, is grant-specific:
 * For grants that may require end-user interaction
   (authorization_code, device_code, CIBA, and similar), a Client
   responds by initiating a new authorization request, conveying its
-  claim requirements via the OpenID Connect `claims` request
-  parameter (Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}.
+  claim requirements via an applicable front-channel claims request
+  mechanism, such as the OpenID Connect `claims` request parameter
+  (Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}.
   The `requested_claims` parameter defined here is not used with
   these grants.
 
@@ -514,9 +516,9 @@ requested those claims at the original authorization. An
 Authorization Server that would require fresh end-user consent or
 re-authentication to release a requested claim MAY decline that
 claim, or respond with an OpenID Connect error such as
-`consent_required` or `interaction_required` (Section 3.1.2.6 of {{OpenID.Core}})
-that prompts the Client to initiate a new authorization request (see
-{{interactive-grants}}).
+`consent_required` or `interaction_required` (Section 3.1.2.6 of
+{{OpenID.Core}}) that prompts the Client to initiate a new
+authorization request (see {{interactive-grants}}).
 
 ### Interactive Grants {#interactive-grants}
 
@@ -524,9 +526,9 @@ For grants that may require end-user interaction (the
 `authorization_code` grant, the device authorization grant, the
 CIBA grant, and similar), a Client responding to
 `insufficient_claims` SHOULD initiate a new authorization request
-and convey its claim requirements using the OpenID Connect `claims`
-request parameter (Section 5.5 of {{OpenID.Core}}); see
-{{rel-oidc-claims}}.
+and convey its claim requirements using an applicable front-channel
+claims request mechanism, such as the OpenID Connect `claims` request
+parameter (Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}.
 
 This separation lets the Authorization Server apply consent, user
 authentication, or interaction policies appropriate to the new claim
@@ -651,7 +653,7 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_claims",
-  "error_description": "The presented Access Token is missing required claims.",
+  "error_description": "The Access Token is missing required claims.",
   "required_claims": ["email", "department"]
 }
 ~~~
@@ -695,9 +697,10 @@ Access Token was acquired:
   authorization flow (the `authorization_code` grant, the device
   authorization grant, the CIBA grant, or any other grant that may
   involve end-user interaction), the Client SHOULD initiate a new
-  authorization request and convey its claim requirements using the
-  OpenID Connect `claims` request parameter
-  (Section 5.5 of {{OpenID.Core}}); see {{rel-oidc-claims}}. The
+  authorization request and convey its claim requirements using an
+  applicable front-channel claims request mechanism, such as the
+  OpenID Connect `claims` request parameter (Section 5.5 of
+  {{OpenID.Core}}); see {{rel-oidc-claims}}. The
   `requested_claims` parameter defined in this document is not used
   in this case.
 
@@ -935,10 +938,10 @@ requests individual claims for the ID Token and UserInfo responses,
 with optional essential/voluntary semantics and value constraints.
 
 This document defers to the OIDC `claims` parameter for any response
-to `insufficient_claims` that requires a new authorization request,
-including the `authorization_code` grant, the device authorization
-grant, the CIBA grant, and similar interactive flows. In these
-cases:
+to `insufficient_claims` that requires a new OIDC authorization
+request, including the `authorization_code` grant, the device
+authorization grant, the CIBA grant, and similar interactive flows.
+In these cases:
 
 * The Client SHOULD initiate a new authorization request to the
   Authorization Server and include a `claims` parameter naming the
@@ -973,8 +976,8 @@ and different deployment patterns:
   in the issued token.
 
 An Authorization Server MAY support both `claims` (on its OIDC
-endpoints) and `requested_claims` (on its Token Endpoint Token
-Exchange and Refresh Token requests); this document does not define
+endpoints) and `requested_claims` (on Token Exchange and Refresh
+Token requests at its Token Endpoint); this document does not define
 an interaction between them.
 
 ## OAuth 2.0 Bearer Token Usage (RFC 6750) and Step-Up Authentication (RFC 9470)
@@ -1038,10 +1041,10 @@ decline the request.
 A recipient constructing a `required_claims` field, and an
 Authorization Server consuming a `requested_claims` parameter, MUST
 treat the value as untrusted input until validated. Implementations
-MUST validate that each token in the list conforms to the syntax
-constraints stated in this document and MUST NOT pass the value into
-log formatters, database queries, or claim release rules without
-proper escaping or parameterization.
+MUST validate that each claim name in the array conforms to the
+syntax constraints stated in this document and MUST NOT pass the
+value into log formatters, database queries, or claim release rules
+without proper escaping or parameterization.
 
 ## Replay and Caching
 
@@ -1106,7 +1109,7 @@ Name:
 : `insufficient_claims`
 
 Usage Location:
-: Token Error Response, Resource Access Error Response
+: Token Endpoint Error Response, Resource Access Error Response
 
 Protocol Extension:
 : This document
@@ -1204,14 +1207,6 @@ Specification Document(s):
 
 
 --- back
-
-# Acknowledgments
-{:numbered="false"}
-
-The author thanks the OAuth working group participants who raised
-the underlying interoperability gap in the Identity Assertion
-Authorization Grant draft.
-
 
 # Worked End-to-End Example {#worked-example}
 
@@ -1474,3 +1469,11 @@ recognize the parameter. Example IdP AS metadata fragment at
   "requested_claims_parameter_supported": true
 }
 ~~~
+
+
+# Acknowledgments
+{:numbered="false"}
+
+The author thanks the OAuth working group participants who raised
+the underlying interoperability gap in the Identity Assertion
+Authorization Grant draft.
