@@ -9,7 +9,7 @@ Expires: 28 November 2026
 
 
                 OAuth 2.0 Insufficient Claims Challenge
-      draft-mcguinness-oauth-insufficient-claims-challenge-latest
+           draft-mcguinness-oauth-insufficient-claims-latest
 
 Abstract
 
@@ -41,7 +41,7 @@ About This Document
 
    Status information for this document may be found at
    https://datatracker.ietf.org/doc/draft-mcguinness-oauth-insufficient-
-   claims-challenge/.
+   claims/.
 
    Discussion of this document takes place on the Web Authorization
    Protocol Working Group mailing list (mailto:oauth@ietf.org), which is
@@ -50,7 +50,7 @@ About This Document
 
    Source for this draft and an issue tracker can be found at
    https://github.com/mcguinness/draft-mcguinness-oauth-insufficient-
-   claims-challenge.
+   claims.
 
 Status of This Memo
 
