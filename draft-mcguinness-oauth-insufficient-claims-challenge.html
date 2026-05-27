@@ -1445,7 +1445,7 @@ authentication challenges at Protected Resources
 (<span><a href="https://rfc-editor.org/rfc/rfc6750#section-3" class="relref">Section 3</a> of [<a href="#RFC6750" class="cite xref">RFC6750</a>]</span>).<a href="#section-1-4.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="section-1-4.2">
-          <p id="section-1-4.2.1">A <code>required_claims</code> parameter (a JSON array of claim names)
+          <p id="section-1-4.2.1">A <code>required_claims</code> parameter (a JSON array of claim entries)
 carried in Token Endpoint error response bodies, in JSON response
 bodies accompanying Protected Resource Bearer challenges, and
 (optionally) in OAuth 2.0 Protected Resource Metadata
@@ -1778,12 +1778,12 @@ original request and the retry.<a href="#section-3.2-17.1.1" class="pilcrow">¶<
 understanding of the claim names and constraint values involved.<a href="#section-3.2-17.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-3.2-18">A recipient <span class="bcp14">SHOULD NOT</span> include the same claim name in more than one
-entry of the array. A Client or Issuing Authorization Server
-receiving duplicate entries for the same claim name <span class="bcp14">MUST</span> treat them
-as a single request for that claim and applies the union of any
-constraints; if the constraints conflict, the recipient's behavior
-on the re-issued credential is undefined.<a href="#section-3.2-18" class="pilcrow">¶</a></p>
+<p id="section-3.2-18">A recipient <span class="bcp14">MUST NOT</span> include the same claim name in more than one
+entry of the array. A Client receiving duplicate entries for the
+same claim name in <code>required_claims</code> <span class="bcp14">MUST</span> treat the value as
+malformed and <span class="bcp14">MUST NOT</span> forward it as <code>requested_claims</code>. An
+Authorization Server receiving duplicate entries for the same claim
+name in <code>requested_claims</code> <span class="bcp14">MUST</span> treat the parameter as malformed.<a href="#section-3.2-18" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="token-endpoint">
@@ -1942,8 +1942,8 @@ percent-encoded as the value of the <code>requested_claims</code> form
 parameter. The <code>requested_claims</code> parameter <span class="bcp14">MUST NOT</span> appear more
 than once in a single Token Endpoint request. A Client <span class="bcp14">SHOULD NOT</span>
 include the same claim name in more than one entry of the array.
-An Authorization Server receiving duplicate entries <span class="bcp14">MUST</span> treat
-them as a single request for that claim.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
+An Authorization Server receiving duplicate entries for the same
+claim name <span class="bcp14">MUST</span> treat the parameter as malformed.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1969,14 +1969,14 @@ audience or resource. Changing the audience or resource may cause a
 different policy to apply; see <a href="#rel-scope" class="auto internal xref">Section 7.3</a> and
 <a href="#rel-resource-indicators" class="auto internal xref">Section 7.4</a>.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 <p id="section-4.1-6">A Client <span class="bcp14">MUST</span> ensure that the <code>requested_claims</code> value it sends is
-a well-formed JSON array of strings conforming to the syntax defined
-in this document, and <span class="bcp14">MUST NOT</span> forward malformed input received in
-a <code>required_claims</code> field from a recipient.<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+a well-formed JSON array of claim entries conforming to the syntax
+defined in <a href="#response-param" class="auto internal xref">Section 3.2</a>, and <span class="bcp14">MUST NOT</span> forward malformed input
+received in a <code>required_claims</code> field from a recipient.<a href="#section-4.1-6" class="pilcrow">¶</a></p>
 <p id="section-4.1-7">A Client <span class="bcp14">SHOULD</span> forward the value received in <code>required_claims</code>
 verbatim as the value of <code>requested_claims</code>, percent-encoded for
 the <code>application/x-www-form-urlencoded</code> body. A Client <span class="bcp14">MAY</span> include
-additional claim names in the array based on local knowledge of the
-target resource.<a href="#section-4.1-7" class="pilcrow">¶</a></p>
+additional entries (bare claim names or constraint objects) in the
+array based on local knowledge of the target resource.<a href="#section-4.1-7" class="pilcrow">¶</a></p>
 <div id="use-with-token-exchange">
 <section id="section-4.1.1">
           <h4 id="name-use-with-token-exchange">
@@ -2109,8 +2109,9 @@ it cannot satisfy the constraint.<a href="#section-4.3-2.5.1" class="pilcrow">¶
 </li>
           <li class="normal" id="section-4.3-2.6">
             <p id="section-4.3-2.6.1">An Authorization Server that does not support constraint entries
-<span class="bcp14">MAY</span> ignore the <code>value</code> and <code>values</code> members and treat the entry as
-the bare-string form (any value acceptable).<a href="#section-4.3-2.6.1" class="pilcrow">¶</a></p>
+<span class="bcp14">MUST NOT</span> ignore the <code>value</code> or <code>values</code> members and treat the
+entry as the bare-string form. It <span class="bcp14">MUST</span> either decline the
+constrained claim or reject the request with <code>invalid_request</code>.<a href="#section-4.3-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-4.3-3">Issuance of a token in response to a <code>requested_claims</code> request is
@@ -2470,9 +2471,12 @@ cases:<a href="#section-7.5-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7.5-3.1">
             <p id="section-7.5-3.1.1">The Client <span class="bcp14">SHOULD</span> initiate a new authorization request to the
-Authorization Server and include a <code>claims</code> parameter naming the
-claims that were enumerated in the <code>required_claims</code> field of the
-<code>insufficient_claims</code> response or challenge.<a href="#section-7.5-3.1.1" class="pilcrow">¶</a></p>
+Authorization Server and include a <code>claims</code> parameter reflecting
+the entries enumerated in the <code>required_claims</code> field of the
+<code>insufficient_claims</code> response or challenge. Mapping constraint
+entries to OIDC <code>claims</code> syntax is deployment-specific and only
+possible where the Authorization Server supports the corresponding
+OIDC claim request semantics.<a href="#section-7.5-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.5-3.2">
             <p id="section-7.5-3.2.1">The Authorization Server applies its normal interactive-flow
@@ -2502,9 +2506,9 @@ claims and value constraints.<a href="#section-7.5-5.1.1" class="pilcrow">¶</a>
           <li class="normal" id="section-7.5-5.2">
             <p id="section-7.5-5.2.1"><code>requested_claims</code> is presented at the Token Endpoint as part of
 a back-channel re-issuance request (Token Exchange or Refresh
-Token), where no end-user interaction occurs. It is a flat hint
-to the Authorization Server about which claims should be included
-in the issued token.<a href="#section-7.5-5.2.1" class="pilcrow">¶</a></p>
+Token), where no end-user interaction occurs. It is a hint to the
+Authorization Server about which claims should be included in the
+issued token, with optional <code>value</code> or <code>values</code> constraints.<a href="#section-7.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.5-6">An Authorization Server <span class="bcp14">MAY</span> support both <code>claims</code> (on its OIDC
@@ -2534,11 +2538,12 @@ context.<a href="#section-7.6-1" class="pilcrow">¶</a></p>
 <a href="#section-7.7" class="section-number selfRef">7.7. </a><a href="#name-oauth-20-rich-authorization" class="section-name selfRef">OAuth 2.0 Rich Authorization Requests</a>
         </h3>
 <p id="section-7.7-1"><span>[<a href="#RFC9396" class="cite xref">RFC9396</a>]</span> carries structured request objects
-(<code>authorization_details</code>) as JSON. <code>required_claims</code> is deliberately
-flat: claim names are atomic tokens and do not require structured
-encoding. Profiles needing per-claim value constraints or schema
-references <span class="bcp14">SHOULD</span> define their own parameter rather than overload
-<code>required_claims</code>.<a href="#section-7.7-1" class="pilcrow">¶</a></p>
+(<code>authorization_details</code>) as JSON. The claim-entry syntax in this
+document is intentionally much narrower: it can name claims and, when
+needed, request equality against one value or one of a set of values.
+Profiles needing richer authorization semantics, schema references,
+or non-claim constraints <span class="bcp14">SHOULD</span> define their own parameter rather
+than overload <code>required_claims</code>.<a href="#section-7.7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2604,10 +2609,12 @@ decline the request.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
 <p id="section-8.3-1">A recipient constructing a <code>required_claims</code> field, and an
 Authorization Server consuming a <code>requested_claims</code> parameter, <span class="bcp14">MUST</span>
 treat the value as untrusted input until validated. Implementations
-<span class="bcp14">MUST</span> validate that each claim name in the array conforms to the
-syntax constraints stated in this document and <span class="bcp14">MUST NOT</span> pass the
-value into log formatters, database queries, or claim release rules
-without proper escaping or parameterization.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+<span class="bcp14">MUST</span> validate that each entry in the array conforms to the syntax
+constraints stated in this document, including claim-name syntax,
+mutual exclusion of <code>value</code> and <code>values</code>, and the absence of
+duplicate claim names. Implementations <span class="bcp14">MUST NOT</span> pass the value into
+log formatters, database queries, or claim release rules without
+proper escaping or parameterization.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="replay-and-caching">
