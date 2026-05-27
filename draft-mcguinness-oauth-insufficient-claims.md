@@ -3,7 +3,7 @@ title: "OAuth 2.0 Insufficient Claims Challenge"
 abbrev: "OAuth Claims Challenge"
 category: std
 
-docname: draft-mcguinness-oauth-insufficient-claims-challenge-latest
+docname: draft-mcguinness-oauth-insufficient-claims-latest
 submissiontype: IETF
 number:
 date:
@@ -22,7 +22,7 @@ venue:
   type: "Working Group"
   mail: "oauth@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
-  github: "mcguinness/draft-mcguinness-oauth-insufficient-claims-challenge"
+  github: "mcguinness/draft-mcguinness-oauth-insufficient-claims"
 
 author:
  -

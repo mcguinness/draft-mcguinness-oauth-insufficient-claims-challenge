@@ -1,4 +1,4 @@
 # License
 
 See the
-[guidelines for contributions](https://github.com/mcguinness/draft-mcguinness-oauth-insufficient-claims-challenge/blob/main/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/mcguinness/draft-mcguinness-oauth-insufficient-claims/blob/main/CONTRIBUTING.md).
