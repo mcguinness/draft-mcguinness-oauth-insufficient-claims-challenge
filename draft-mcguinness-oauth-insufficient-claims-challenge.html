@@ -1711,9 +1711,8 @@ following members:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
 claim <span class="bcp14">MUST</span> equal.<a href="#section-3.2-6.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-3.2-7">The <code>value</code> and <code>values</code> members are mutually exclusive; an entry
-<span class="bcp14">MUST NOT</span> include both. An entry that includes neither is equivalent
-to the bare-string form. For example:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">An entry <span class="bcp14">MUST NOT</span> include both <code>value</code> and <code>values</code>. An entry that
+includes neither is equivalent to the bare-string form. For example:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-3.2-8">
 <pre>
 "required_claims": [
@@ -1741,13 +1740,13 @@ Metadata documents (<a href="#prm" class="auto internal xref">Section 5.1</a>). 
 <code>scopes_supported</code> and <code>claims_supported</code> metadata conventions of
 <span>[<a href="#RFC8414" class="cite xref">RFC8414</a>]</span> and <span>[<a href="#OpenID.Core" class="cite xref">OpenID.Core</a>]</span>.<a href="#section-3.2-11" class="pilcrow">¶</a></p>
 <p id="section-3.2-12">When the same list is carried as the <code>requested_claims</code> parameter
-(the back-channel retry parameter used by the Client; see
-<a href="#request-param" class="auto internal xref">Section 4.1</a>) on an <code>application/x-www-form-urlencoded</code> Token
-Endpoint request, the JSON array value is serialized to a JSON string
-and percent-encoded per <code>application/x-www-form-urlencoded</code> rules.
-This follows the precedent of <code>authorization_details</code> (<span>[<a href="#RFC9396" class="cite xref">RFC9396</a>]</span>).
-Characters that have special meaning in JSON or in form bodies,
-including <code>[</code>, <code>]</code>, <code>"</code>, and <code>,</code>, <span class="bcp14">MUST</span> be percent-encoded.<a href="#section-3.2-12" class="pilcrow">¶</a></p>
+on an <code>application/x-www-form-urlencoded</code> Token Endpoint request
+(see <a href="#request-param" class="auto internal xref">Section 4.1</a>), the JSON array value is serialized to a
+JSON string and percent-encoded per <code>application/x-www-form-urlencoded</code>
+rules. This follows the precedent of <code>authorization_details</code>
+(<span>[<a href="#RFC9396" class="cite xref">RFC9396</a>]</span>). Characters that have special meaning in JSON or in
+form bodies, including <code>[</code>, <code>]</code>, <code>"</code>, and <code>,</code>, <span class="bcp14">MUST</span> be
+percent-encoded.<a href="#section-3.2-12" class="pilcrow">¶</a></p>
 <p id="section-3.2-13">The <code>required_claims</code> parameter is <span class="bcp14">OPTIONAL</span>. A recipient that cannot
 or does not wish to enumerate the missing claims <span class="bcp14">MAY</span> return the
 error code without it. In that case the Client has no
